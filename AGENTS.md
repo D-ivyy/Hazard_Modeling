@@ -30,6 +30,7 @@ Performance tier (`model-gpr`).
 | `docs/` | Project documentation. Index: [`docs/README.md`](docs/README.md). |
 | `docs/extra/` | Staging area for reference materials being brought into the project _(contents TBD — owner-curated)_. |
 | `docs/google_drive_docs/` | Local `.docx` copies of the team's shared Google Drive **"InfraSure Hazard"** reference set (Drive is the source of truth). Index + folder links: [`docs/google_drive_docs/README.md`](docs/google_drive_docs/README.md). |
+| `docs/plans/` | Planning docs / plan-of-record (mirrors `model-gpr`'s `docs/plans/`). |
 | `Notebooks/` | Exploratory & analysis notebooks. |
 | `.venv/` | Local Python environment (gitignored). |
 | `.github/workflows/` | CI (GitHub Actions) — starter `ci.yml`, also runnable locally with `act`. |
