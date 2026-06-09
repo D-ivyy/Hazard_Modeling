@@ -1,9 +1,33 @@
-# Plan — Push `Hazard_modeling` to its remote (deferred)
+# Plan — Push `Hazard_modeling` to its remote ✅ DONE
 
-> **Status: 📌 Deferred — _not_ pushing to a remote yet.** The repo is committed locally;
-> this is the ready-to-run runbook + the locked decisions for when we choose to push.
->
-> _Last updated: 2026-06-08._
+> **Status: ✅ Pushed (2026-06-09).** Live at **https://github.com/D-ivyy/Hazard_Modeling** (PRIVATE).
+> Pushed `main` (HEAD `e32a48b`); `.env`, the 905 MB MRMS cache, parquets, `.venv`, and the cross-project
+> symlinks all stayed local (gitignored — verified). The runbook below is kept as the historical record;
+> the **actual outcome differs** from the originally-locked plan — see the next block.
+
+## What actually happened (supersedes the locked plan below)
+
+- **Destination: personal `D-ivyy/Hazard_Modeling`** (owner's call), **not** the `aamani-ai` org. Private.
+- **Auth: SSH, not HTTPS.** The originally-planned HTTPS-via-`gh` path was **blocked** — the `gh` OAuth
+  token lacks the **`workflow` scope**, so GitHub refused the push (it contains `.github/workflows/ci.yml`;
+  *"refusing to allow an OAuth App to create or update workflow … without `workflow` scope"*).
+  **SSH has no such restriction** (it authenticates as the user, who can push workflows).
+- **The SSH identity matters:** this machine has 3 GitHub SSH aliases —
+  `github.com-work → D-ivyy`, `github.com-personal → Divi-patel`, `github.com-divy → D-ivy` (a *different*
+  account). **`D-ivyy` = the `github.com-work` alias** (`id_ed25519_work`). The default key returns
+  *"Repository not found"* (no access to this private repo); the working remote is:
+  ```
+  git remote set-url origin git@github.com-work:D-ivyy/Hazard_Modeling.git
+  git push -u origin main
+  ```
+- **Reusable rule:** to push to `D-ivyy`, use the `github.com-work` SSH alias. Prefer SSH over the `gh`
+  HTTPS token whenever the repo contains GitHub Actions workflows (the token lacks `workflow` scope).
+
+---
+
+## Original (now-historical) plan — locked decisions
+
+> _Last updated: 2026-06-08. Superseded by the outcome above (org → personal; HTTPS → SSH)._
 
 ## Decisions (locked)
 
