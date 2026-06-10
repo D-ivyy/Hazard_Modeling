@@ -66,6 +66,9 @@ The shared Drive reference set, mirrored under `docs/google_drive_docs/`:
 
 Accurate per-doc summaries + Drive folder links: [`docs/google_drive_docs/README.md`](docs/google_drive_docs/README.md).
 
+**Method provenance** — where each method comes from (external citations + the research-repo A-series),
+mapped per pipeline layer: [`docs/references/`](docs/references/README.md).
+
 ---
 
 ## Getting started

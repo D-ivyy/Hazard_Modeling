@@ -40,8 +40,8 @@ interface, but the **coupling physics changes per (peril × asset)**.
 ✅ = built end-to-end. Everything else is roadmap. **The three coupling types** (the M2 physics):
 **areal hit-or-miss** (finite footprint covers the asset or misses — Minkowski `(√F+√s)²/A`) ·
 **field-intensity** (continuous field sampled at the asset) · **site-conditioned** (field × per-asset
-susceptibility, e.g. elevation / fuel). Source: A21 coupling-type dispatch + A12 peril×asset taxonomy
-(in `infrasure-hazard-competitive-research/learnings/architecture/`).
+susceptibility, e.g. elevation / fuel). Source: A21 coupling-type dispatch + A12 peril×asset taxonomy —
+with full provenance (external citations + research-repo links) in [`docs/references/`](../docs/references/README.md).
 
 ## Start here
 

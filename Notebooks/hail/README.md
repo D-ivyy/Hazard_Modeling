@@ -106,7 +106,8 @@ The same shared catalog feeds a wind farm, but the **coupling changes** — the 
 
 Same M0→M4 interface, genuinely different M2 physics. (A21 coupling-type dispatch; A12 onshore/offshore
 asset split — `wind/` is reserved for the **onshore** wind farm, offshore a later sibling. A21 flags
-this as the *"wind-farm open question."*)
+this as the *"wind-farm open question."*) Method provenance — external citations + A-series links — is in
+[`docs/references/`](../../docs/references/README.md).
 
 ---
 

@@ -9,3 +9,4 @@ Documentation for **Hazard_modeling**.
 | [`plans/`](plans/) | Planning docs / plan-of-record: per-phase plans, the **decisions** log (DD-1..4), and the **assumptions** register. |
 | [`principles/`](principles/README.md) | **The foundational beliefs** ("why we build this way") — standard interface not standard physics · modular from day one · basics spot-on. |
 | [`learning_logs/`](learning_logs/README.md) | **What building taught us** — derived knowledge *not in the references*, crystallized so the next peril inherits the lesson. The retrospective counterpart to `principles/` (beliefs) and `plans/` (intent). |
+| [`references/`](references/README.md) | **What it's grounded in** — the methodology-provenance map (each method → external source + internal derivation), plus the external [`bibliography`](references/bibliography.md) reproduced in-repo. Answers *"where's this method from / how do you know industry does this?"* |
