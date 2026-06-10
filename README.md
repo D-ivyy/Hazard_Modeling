@@ -7,23 +7,30 @@ Produces asset-level **loss distributions** that feed the platform's overall **T
 > **Tier 2 of 3** — Performance Modeling (normal ops · [`model-gpr`](model-gpr)) ·
 > **Hazard Risk Modeling** _(this repo)_ · Overall Risk Modeling (Total Loss).
 
-> 🚧 **Early scaffold** — structure is in place; modeling content is being assembled.
+> **Notebooks-first build under way** — *hail × solar* runs end-to-end (M0→M4: catalog → coupling →
+> damage → loss & metrics). Hazard **1 of 3** (hail ✅ · wildfire · wind), then a production architecture.
+> Start at [`Notebooks/README.md`](Notebooks/README.md).
 
 ## Layout
 
 ```
+Notebooks/               # worked pipelines, organized  peril → asset
+  hail/                  #   shared catalog: M0 (data) + M1 (events + frequency)
+    solar/               #   hail × solar — M2 coupling · M3 damage · M4 loss & metrics  ✅
 docs/
-  README.md
-  extra/                 # reference materials being brought in (TBD)
+  plans/                 # per-phase plans, decisions (DD-*), assumptions register
+  principles/            # why we build this way
+  learning_logs/         # what building taught us (not in the refs)
   google_drive_docs/     # local copies of the team's shared Drive reference set (+ links)
-Notebooks/               # analysis / exploration
+  extra/                 # scope/story + per-session task-history handoffs
+data/                    # pipeline outputs (large parquets gitignored; manifests/summaries kept)
+scripts/                 # one-off / utility scripts (e.g. the MRMS record scan)
 .github/workflows/       # CI (GitHub Actions)
-requirements.txt
-AGENTS.md / CLAUDE.md    # contributor + agent guidance
+AGENTS.md / CLAUDE.md    # contributor + agent guidance (single source = AGENTS.md)
 ```
 
 Plus local-only, **gitignored** cross-project symlinks: `model-gpr/`, `hazard_analysis/`,
-`infrasure-hazard-competitive-research/`, `Learning/`.
+`infrasure-hazard-competitive-research/`, `infrasure-damage-curves/`, `Learning/`.
 
 ## Getting started
 
@@ -41,4 +48,6 @@ jupyter lab            # notebooks live in Notebooks/
 
 ## Status
 
-Foundation phase: reference docs first, then methodology + implementation.
+Hazard **1 of 3** — *hail × solar* built end-to-end (M0→M4, real but record-limited numbers,
+math-validated). Next: wildfire, then wind (notebooks-first), *then* a production folder architecture.
+Start at [`Notebooks/README.md`](Notebooks/README.md).

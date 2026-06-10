@@ -1,8 +1,10 @@
 # AGENTS.md — Hazard_modeling
 
-> ⚠️ **Early scaffold.** This repo was just created. The structure below is real; the modeling
-> content is still being assembled. Sections marked _(TBD)_ are placeholders, not commitments —
-> they fill in as the work lands.
+> **Status — building, notebooks-first.** The first hazard pipeline is **built end-to-end in
+> notebooks**: *hail × solar*, M0→M4 (raw data → catalog → coupling → damage → annual loss & risk
+> metrics), with real (record-limited) numbers. Hazard **1 of 3** (hail ✅ · wildfire · wind), *then*
+> a production folder architecture. Start at [`Notebooks/README.md`](Notebooks/README.md) — the
+> peril × asset map.
 
 **Hazard_modeling** is the **Hazard Risk Modeling** engine of InfraSure's risk platform — the tier
 that models **catastrophic natural-hazard events and the resulting asset damage / losses** (e.g.
@@ -28,11 +30,14 @@ Performance tier (`model-gpr`).
 | Path | What |
 |---|---|
 | `docs/` | Project documentation. Index: [`docs/README.md`](docs/README.md). |
-| `docs/extra/` | Staging area for reference materials being brought into the project _(contents TBD — owner-curated)_. |
+| `docs/extra/` | Scope-and-story anchor + per-session [`tasks_history/`](docs/extra/tasks_history/) handoffs (session→session context). |
 | `docs/google_drive_docs/` | Local `.docx` copies of the team's shared Google Drive **"InfraSure Hazard"** reference set (Drive is the source of truth). Index + folder links: [`docs/google_drive_docs/README.md`](docs/google_drive_docs/README.md). |
 | `docs/plans/` | Planning docs / plan-of-record (mirrors `model-gpr`'s `docs/plans/`). |
 | `docs/principles/` | **The foundational beliefs** — why we build this way ([index](docs/principles/README.md)). |
-| `Notebooks/` | Exploratory & analysis notebooks. |
+| `docs/learning_logs/` | **What building taught us** — derived knowledge not in the references ([index](docs/learning_logs/README.md)). |
+| `Notebooks/` | The worked pipelines, organized **`peril → asset`** (e.g. `hail/` = shared catalog M0/M1; `hail/solar/` = M2–M4). Index: [`Notebooks/README.md`](Notebooks/README.md). |
+| `data/` | Pipeline outputs per peril (`data/<peril>/`); large parquets + raw cache gitignored, manifests/summaries kept. |
+| `scripts/` | One-off / utility scripts (e.g. the resumable MRMS record scan) — explicitly not production code ([README](scripts/README.md)). |
 | `.venv/` | Local Python environment (gitignored). |
 | `.github/workflows/` | CI (GitHub Actions) — starter `ci.yml`, also runnable locally with `act`. |
 
@@ -74,17 +79,23 @@ Notebooks live in `Notebooks/`; register the kernel from `.venv` if needed.
 
 ---
 
-## Conventions _(emerging — TBD)_
+## Conventions
 
 - Single source of truth for agent guidance is **this file** (`AGENTS.md`); `CLAUDE.md` just imports it.
 - Mirror the house style of the sibling `model-gpr` repo where it makes sense: `docs/` layout,
   gitignored local-only symlinks, plain `venv` + `requirements.txt`.
 - **The three principles** ([`docs/principles/`](docs/principles/README.md)) govern design decisions: *standard interface, not standard physics* · *modular from day one* · *basics spot-on*.
-- _(Data layout, naming, output formats — to be defined once the modeling work starts.)_
+- **Layout:** notebooks organized `peril → asset` (M0/M1 = shared peril catalog · M2–M4 = per-asset);
+  outputs under `data/<peril>/`; a README per layer/folder.
+- **Tracking:** assumptions in [`docs/plans/hail/assumptions.md`](docs/plans/hail/assumptions.md),
+  decisions in [`decisions.md`](docs/plans/hail/decisions.md) (DD-*), derived lessons in
+  [`docs/learning_logs/`](docs/learning_logs/README.md). Risk metrics shown as **% of TIV** alongside dollars.
 
 ---
 
 ## Status
 
-**Foundation phase** — scaffolding only, no modeling code yet. Reference docs land first
-(`docs/google_drive_docs/`), then the methodology and implementation follow.
+**Hazard 1 of 3 — *hail × solar* built end-to-end** in notebooks (M0→M4: catalog → coupling → damage →
+loss & metrics; real but record-limited numbers, math-validated). **Next:** wildfire, then wind — same
+notebooks-first pattern — *then* a production folder architecture (not before). Latest session context:
+the newest handoff in [`docs/extra/tasks_history/`](docs/extra/tasks_history/).
