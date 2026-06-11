@@ -19,7 +19,7 @@ Grouped by layer (M0 → M3); newest layer last.
 
 | # | Assumption | Basis / why | Status | Revisit when |
 |---|---|---|---|---|
-| A1 | **Region = 50-mi circle** around the asset | matches NOAA's search radius (apples-to-apples); the `A` **cancels** in `λ_asset = λ_collection·p`, so the radius washes out — chosen for homogeneity + data-consistency, not magnitude ([learning_logs/06](../../learning_logs/06_collection_region_size_cancels.md)) | assumed | portfolio / multi-asset work |
+| A1 | **Region = 50-mi circle** around the asset, **assumed spatially homogeneous** (≈uniform event density, footprint size & hail severity across it) | matches NOAA's search radius (apples-to-apples); the region area `A` **cancels** in `λ_asset = λ_collection·p`, so the radius itself washes out — **what's actually assumed is the spatial homogeneity** (it's what makes `λ_collection ∝ A` hold). Chosen for homogeneity + data-consistency, not magnitude ([learning_logs/06](../../learning_logs/06_collection_region_size_cancels.md)). | assumed | larger region / portfolio — re-check homogeneity holds |
 | A2 | **Severe threshold = 25.4 mm (1″)** | NWS severe-hail definition; H10 | assumed (standard) | if sub-1″ hail proves damaging to PV |
 | A3 | **Window = Apr–Jun 2024** (one peak season) | bounded for volume; MRMS-on-AWS spans ~2020-10→present | deferred | widen for a real λ (DD-1/DD-2) |
 | A4 | **Daily grain = last tile of day ≈ 24-h max** | the `MESH_Max_1440min` product | assumed | true daily max over all tiles |
