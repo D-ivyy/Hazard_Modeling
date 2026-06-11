@@ -75,6 +75,7 @@ competitive-research `learnings/architecture/` folder does. **Don't pre-create s
 | [03](03_meet_complex_raw_data_from_scratch.md) | Meet complex raw data from scratch — before you use it | method · forward-looking | hail × solar · Phase 1 / M0 (NOAA vs MRMS) | every new source — esp. raw / gridded / open-source data |
 | [04](04_two_datasets_one_peril_decompose.md) | Two datasets, one peril — decompose by component, don't pick a winner | method · forward-looking | hail × solar / [DD-3](../plans/hail/decisions.md) | any peril with ≥2 datasets of differing nature |
 | [05](05_damage_curve_three_coupled_choices.md) | The asset damage curve is three coupled choices — value-allocation is a financial decision | method · forward-looking | hail × solar · M3 / damage-curve swap | the damage-curve library build; severity for any peril/asset |
+| [06](06_collection_region_size_cancels.md) | The collection region — model over an area, and its size cancels (choose it for homogeneity, not magnitude) | method · substrate | hail × solar · M0/M2 / [A1](../plans/hail/assumptions.md) · [DD-1](../plans/hail/decisions.md) | any areal hit-or-miss peril built as `λ_collection · p` over a region |
 
 *Sub-folders in this tree:* none yet (see the naming rule above).
 
@@ -117,4 +118,4 @@ The decision it generalizes, the principle it serves, the reference it builds on
 
 ---
 
-**Last update:** 2026-06-09 — folder seeded with entry 01.
+**Last update:** 2026-06-11 — added entry 06 (the collection region & why its size cancels).

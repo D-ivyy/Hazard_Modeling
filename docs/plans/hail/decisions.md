@@ -57,7 +57,9 @@ remains the anchor. This is exactly DD-1's named revisit-trigger, now acted on, 
 **Why.** `p` physically requires footprints (MRMS-only). For `λ`, **homogeneity beats naive length** (raw
 NOAA is biased → wrong rate); MRMS-widen gives a clean decent `λ` immediately, and the calibrated NOAA
 extension gives the ideal long `λ` later — *done right*. Consistent event-definition + region throughout
-(methodology: don't mix `λ` from one regime and `p` from another).
+(methodology: don't mix `λ` from one regime and `p` from another) — the **same-region rule**: because the
+region area `A` cancels in `λ_asset = λ_collection·p`, the radius is free *as long as both use the same
+region* ([learning_logs/06](../../learning_logs/06_collection_region_size_cancels.md)).
 
 **Revisit trigger.** Run Stage 2 (calibrated extension) when the **tail** (1-in-250+) needs the longer
 record; at ~5.7 yr the NegBin dispersion fit (DD-2) is still underpowered, so Stage 1 `λ` is "decent, not

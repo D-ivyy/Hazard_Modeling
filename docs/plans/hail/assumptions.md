@@ -19,7 +19,7 @@ Grouped by layer (M0 → M3); newest layer last.
 
 | # | Assumption | Basis / why | Status | Revisit when |
 |---|---|---|---|---|
-| A1 | **Region = 50-mi circle** around the asset | matches NOAA's search radius (apples-to-apples); the `A` that cancels in `λ_asset = λ_collection·p` | assumed | portfolio / multi-asset work |
+| A1 | **Region = 50-mi circle** around the asset | matches NOAA's search radius (apples-to-apples); the `A` **cancels** in `λ_asset = λ_collection·p`, so the radius washes out — chosen for homogeneity + data-consistency, not magnitude ([learning_logs/06](../../learning_logs/06_collection_region_size_cancels.md)) | assumed | portfolio / multi-asset work |
 | A2 | **Severe threshold = 25.4 mm (1″)** | NWS severe-hail definition; H10 | assumed (standard) | if sub-1″ hail proves damaging to PV |
 | A3 | **Window = Apr–Jun 2024** (one peak season) | bounded for volume; MRMS-on-AWS spans ~2020-10→present | deferred | widen for a real λ (DD-1/DD-2) |
 | A4 | **Daily grain = last tile of day ≈ 24-h max** | the `MESH_Max_1440min` product | assumed | true daily max over all tiles |
@@ -40,9 +40,9 @@ Grouped by layer (M0 → M3); newest layer last.
 
 | # | Assumption | Basis / why | Status | Revisit when |
 |---|---|---|---|---|
-| A11 | **Coupling = areal hit-or-miss; hit prob = Minkowski `(√F+√s)²/A`** | A21; methodology §5 (the correct form; fixes the `F/A` bug) | decided (correct form) | true geometric-overlap as primary |
+| A11 | **Coupling = areal hit-or-miss; hit prob = Minkowski `(√F+√s)²/A`** — a size-based probability of **any overlap**, not a distance-to-Hayhurst score | A21; methodology §5 (the correct form; fixes the `F/A` bug). `pᵢ` uses event footprint size `F`, asset size `s`, and region area `A`; it does **not** use the historical footprint's observed distance from the asset. | decided (correct form) | true geometric-overlap as primary |
 | A12 | **Asset footprint `s` ≈ 0.50 km²** (24.8 MW × 5 ac/MW, array) | capacity estimate; `s ≪ F` so result insensitive here | assumed (estimate) | actual plant polygon (solar-boundary pipeline) |
-| A13 | **Full exposure on hit** (`exposed_fraction = 1`) | `s ≪ F` (a swath reaching the farm covers it all) | assumed (simplification) | larger assets / line geometry / partial overlap |
+| A13 | **Full exposure on hit** (`exposed_fraction = 1`) | `pᵢ` only decides whether the footprint overlaps the plant at all, including edge-contact cases. Conditional on a hit, v1 assumes the whole at-risk solar footprint is exposed because `s ≪ F` (a swath reaching the farm usually covers it all). **Under investigation:** small swaths that only clip a site edge should eventually use `overlap_area / asset_area` rather than full exposure. | assumed (simplification) | larger assets / line geometry / partial overlap; true geometric overlap with exposed fraction |
 | A14 | **`λ_asset` = `λ_collection` × `p`** — the asset's annual hit *rate* | `λ_collection` **fitted** ≈ 29.6/yr on the ~5.65-yr record (DD-3 Stage 1) → `λ_asset` ≈ **0.26/yr** | **fitted** (record-limited) | NOAA-calibrated extension for a longer record (DD-3 Stage 2) |
 
 ## M3 — severity / damage

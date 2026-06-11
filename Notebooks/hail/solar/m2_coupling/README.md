@@ -20,6 +20,11 @@ mean ≈ 0.9%). That is *all* M2 produces: a probability per event, plus carryin
 forward for the damage step. Summed over the 158-event catalog, the **expected asset-hits `Σpᵢ ≈ 1.39`**,
 and the **fitted annual rate `λ_asset = λ_collection · E[p] = 0.26/yr`** (~1 hit every 3.8 yr).
 
+Important map-reading caveat: `pᵢ` is **size-based**, not a score for how close the historical footprint sits
+to Hayhurst on the plot. A large footprint near the edge of the 50-mile region can have high `pᵢ`; a small
+footprint visually near the asset can have low `pᵢ`. The formula treats each historical event as a future
+event template whose placement is random within the region.
+
 ## Why this way — and not the naive way (two things that matter)
 
 **1. The formula accounts for the asset's size.** A footprint of area `F` covering an asset of size `s`,
@@ -40,7 +45,30 @@ belongs to **frequency** (how *often* we get hit), not severity (how *bad*).
   apply the FULL damage; if it misses, zero.** `pᵢ` is the coin's bias, never multiplied into the dollars.
 
 `A` also **cancels** in `λ_asset = λ_collection · p` (rate grows with the region, `p` shrinks with it), so
-the 50-mile radius doesn't bias the answer — as long as rate and `p` use the *same* region.
+the 50-mile radius doesn't bias the answer — as long as rate and `p` use the *same* region. (Why the radius
+washes out, in depth: [learning_logs/06](../../../../docs/learning_logs/06_collection_region_size_cancels.md).)
+
+One more subtlety: `pᵢ` is the probability of **any overlap**. It does not decide what fraction of the plant
+is exposed after a hit. That is a separate simplification: v1 assumes **full exposure on hit**
+(`exposed_fraction = 1`) because the Hayhurst array footprint is tiny relative to typical hail swaths.
+
+**Under-investigation caveat.** The Minkowski formula gives some probability even to a small swath because a
+small swath can still touch the plant if it lands close enough. But "touches" is not the same as "covers."
+For edge-contact cases, a future geometric-overlap version should estimate:
+
+```text
+exposed_fraction = overlap_area / asset_area
+loss = damage_ratio * asset_value * exposed_fraction
+```
+
+The v1 shortcut is therefore:
+
+```text
+any overlap -> full exposure
+```
+
+That is reasonable for Hayhurst while `s` is tiny relative to most hail swaths, but it is still an explicit
+approximation, not settled physics.
 
 ## Inputs → outputs
 
@@ -52,8 +80,9 @@ M1 catalog (each event's footprint `F`) → `data/hail/hayhurst_hail_m2_coupled.
 - **A longer, NOAA-calibrated rate** — `λ_collection` is now **fitted** on the ~5.65-yr MRMS record (so
   `λ_asset = 0.26/yr` is real but record-limited); the longer, bias-corrected record is the next lever
   ([DD-3 Stage 2](../../../../docs/plans/hail/decisions.md)).
-- **Exposed fraction** — we assume *full* exposure on a hit, sound here because the farm (~0.5 km²) is tiny
-  vs a hail swath (hundreds of km²); it matters for larger assets / line geometry.
+- **Exposed fraction** — `pᵢ` handles whether there is any overlap; it does not handle partial-overlap
+  severity. We assume *full* exposure on a hit, sound here because the farm (~0.5 km²) is tiny vs a hail
+  swath (hundreds of km²); still under investigation for small edge-clips, larger assets, and line geometry.
 
 ## Notebooks
 
