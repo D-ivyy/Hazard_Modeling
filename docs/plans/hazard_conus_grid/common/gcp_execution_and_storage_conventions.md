@@ -43,9 +43,9 @@ deploy service account: gh-actions-deploy@modeling-nonprod-svc-db5x.iam.gservice
 artifact registry:        us-central1-docker.pkg.dev/modeling-nonprod-svc-db5x/infrasuremodelingdocker
 ```
 
-That is the durable build/deploy pattern once Workload Identity Federation accepts this repository. The current
-remote `D-ivyy/Hazard_Modeling` is rejected by the existing WIF attribute condition, so the first successful
-remote proof used local `gcloud` and a temporary bootstrap job.
+That is the durable build/deploy pattern. The repo was moved from `D-ivyy/Hazard_Modeling` to
+`aamani-ai/Hazard_Modeling`, which satisfies the existing Workload Identity Federation attribute condition.
+The durable GitHub Actions build/deploy path now works.
 
 ## Execution Types
 
@@ -205,8 +205,14 @@ Minimum Cloud Run Job command conventions:
 Use `--max-retries 0` for first proofs so failures are obvious. Use `--max-retries 1` only after the job is
 known to be idempotent and overwrite-safe.
 
-For full fanout, prefer a prebuilt Artifact Registry image. The bootstrap pattern that installs dependencies
-inside `python:3.12-slim` is acceptable for a proof, but not the preferred repeated full-run path.
+For full fanout, use the prebuilt Artifact Registry image produced by:
+
+```text
+.github/workflows/deploy-hazard-conus-grid-mrms-m0-job.yml
+```
+
+The bootstrap pattern that installs dependencies inside `python:3.12-slim` was useful for early proofs, but
+is no longer the preferred repeated full-run path.
 
 ## Control Inputs
 
@@ -270,6 +276,35 @@ MESH value (`max_mesh_mm=1057.7` on `2020-10-27`), which is carried forward as a
 These prove Cloud Run execution and GCS write behavior. They do not mean the full historical run is already
 running.
 
+Durable image proof:
+
+| Item | Value |
+|---|---:|
+| GitHub Actions run | `27649989510` |
+| repository | `aamani-ai/Hazard_Modeling` |
+| workflow | `Deploy Hazard CONUS Grid MRMS M0 Job` |
+| image | `us-central1-docker.pkg.dev/modeling-nonprod-svc-db5x/infrasuremodelingdocker/hazard-conus-grid-mrms-m0:be4be51072b07a8135a47b52d31a8d59614751f6` |
+| Cloud Run Job | `hazard-conus-grid-mrms-m0` |
+| execution | `hazard-conus-grid-mrms-m0-lcqqg` |
+| run id | `20260616T214036Z_wif_deploy_probe` |
+| batch | `2024-06-01` to `2024-06-07` |
+| rows | 91,595 |
+| severe cell-days | 1,450 |
+| sub-severe cell-days | 21,134 |
+| no-hail cell-days | 69,011 |
+| runner elapsed | 18.372 seconds |
+| Cloud Run elapsed | about 1 minute 57 seconds |
+
+Output:
+
+```text
+gs://infrasure-benchmark/hazard_conus_grid/dev/hail/v1_mrms_only/m0_daily_cell_evidence/
+  run_id=20260616T214036Z_wif_deploy_probe/batch=20240601_20240607/
+```
+
+This proves the durable image path: WIF, Artifact Registry image push, Cloud Run Job deploy, runtime service
+account, and GCS write all work from the organization repository.
+
 ## Current Hail Reconciliation Proof
 
 The first MRMS M0 reconciliation proof accepted two non-overlapping Cloud Run batch prefixes:
@@ -308,14 +343,12 @@ Do not start the full accepted MRMS denominator until these are pinned:
 - full-run `run_id`;
 - batch list source;
 - fanout mode: sequential, batched parallel, or task-indexed job;
-- image strategy: durable prebuilt image or explicitly accepted bootstrap fallback;
 - retry/overwrite policy;
 - reconciliation notebook/script;
 - success criteria for accepting M0 before M1.
 
 Recommended next steps for hail:
 
-1. Fix the durable image path by moving the workflow under an allowed WIF repo/org or updating the WIF
-   condition for this repo.
-2. Decide whether the full denominator will run as sequential job updates or a task-indexed fanout.
-3. Start the full 148-batch denominator only after the image/fanout decision is pinned.
+1. Decide whether the full denominator will run as sequential job updates or a task-indexed fanout.
+2. Choose the full-run `run_id`.
+3. Start the full 148-batch denominator only after that fanout decision is pinned.

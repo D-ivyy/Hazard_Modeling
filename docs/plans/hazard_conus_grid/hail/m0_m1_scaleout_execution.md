@@ -258,7 +258,7 @@ gcloud run jobs create hazard-conus-grid-sa-probe \
 The job was created successfully and then deleted. This means the account can deploy a Cloud Run Job when the
 runtime service account is supplied explicitly.
 
-Remaining execution setup:
+Execution setup resolved:
 
 - every Cloud Run Job command for this project must include
   `--service-account project-service-account@modeling-nonprod-svc-db5x.iam.gserviceaccount.com`;
@@ -267,11 +267,9 @@ Remaining execution setup:
 - the attached dashboard deployment guide shows the established build/deploy path uses
   `gh-actions-deploy@modeling-nonprod-svc-db5x.iam.gserviceaccount.com` through GitHub Actions WIF, pushing to
   `us-central1-docker.pkg.dev/modeling-nonprod-svc-db5x/infrasuremodelingdocker`;
-- for a clean Cloud Run Jobs rollout, prefer the same image registry and deploy identity unless local
-  Artifact Registry / Cloud Build permissions are intentionally granted.
-
-Until the image build/push path is pinned, the same batch runner can still be used locally or on a VM. That
-path should only be used for controlled execution, not as a hidden architecture decision.
+- the repo now lives under `aamani-ai/Hazard_Modeling`, which satisfies the WIF condition used by the
+  deployment guide;
+- the durable image build/push/deploy path has succeeded and should be used for repeated Cloud Run execution.
 
 Pinned image build/deploy path:
 
@@ -292,9 +290,8 @@ This workflow is manual-only (`workflow_dispatch`). It follows the existing dash
   - `gs://infrasure-benchmark/hazard_conus_grid/dev/hail/v1_mrms_only/m0_source_inventory/run_id=20260616T165806Z/mrms_v1_source_inventory_20140101_20260615_20260616T165806Z.parquet`
   - `gs://infrasure-benchmark/hazard_conus_grid/dev/common/benchmark_grid/served_conus_cell_ids_v2026_06.csv`
 
-The first GitHub Actions run should use the already-proven batch window `2024-06-01` to `2024-06-07` and
-`execute_after_deploy=false` first. If deploy succeeds, execute the job once and inspect GCS outputs before
-starting any full-denominator fanout.
+The first successful GitHub Actions deploy used `execute_after_deploy=false`, then the deployed job was
+executed manually for the already-proven batch window `2024-06-01` to `2024-06-07`.
 
 First GitHub Actions result:
 
@@ -306,14 +303,43 @@ First GitHub Actions result:
 - this is not a Cloud Run runtime service-account problem. The explicit runtime service account works from
   local `gcloud`.
 
+Durable GitHub Actions result after repo move:
+
+| Item | Value |
+|---|---:|
+| repository | `aamani-ai/Hazard_Modeling` |
+| workflow run | `27649989510` |
+| workflow status | succeeded |
+| image | `us-central1-docker.pkg.dev/modeling-nonprod-svc-db5x/infrasuremodelingdocker/hazard-conus-grid-mrms-m0:be4be51072b07a8135a47b52d31a8d59614751f6` |
+| Cloud Run Job | `hazard-conus-grid-mrms-m0` |
+| execution | `hazard-conus-grid-mrms-m0-lcqqg` |
+| execution status | succeeded |
+| run id | `20260616T214036Z_wif_deploy_probe` |
+| batch | `2024-06-01` to `2024-06-07` |
+| rows | 91,595 |
+| severe cell-days | 1,450 |
+| sub-severe cell-days | 21,134 |
+| no-hail cell-days | 69,011 |
+| runner processing elapsed | 18.372 seconds |
+
+GCS output:
+
+```text
+gs://infrasure-benchmark/hazard_conus_grid/dev/hail/v1_mrms_only/m0_daily_cell_evidence/
+  run_id=20260616T214036Z_wif_deploy_probe/batch=20240601_20240607/
+```
+
+This proves the durable image path. Future repeated Cloud Run batches should use `hazard-conus-grid-mrms-m0`,
+not the bootstrap job, unless there is a specific debugging reason.
+
 Temporary remote-proof fallback:
 
 - deploy the Cloud Run Job directly from local `gcloud`;
 - use the public `python:3.12-slim` image only as a bootstrap image;
 - download the pinned runner script from GCS at runtime;
 - run as `project-service-account@modeling-nonprod-svc-db5x.iam.gserviceaccount.com`;
-- keep this as proof infrastructure only. The durable path should be either moving this repo/workflow under
-  the allowed WIF condition or updating the WIF condition for this repo.
+- keep this as historical proof infrastructure only. The durable path is now the organization-repo workflow
+  and prebuilt Artifact Registry image.
 
 Temporary fallback execution result:
 
@@ -342,7 +368,8 @@ gs://infrasure-benchmark/hazard_conus_grid/dev/hail/v1_mrms_only/m0_daily_cell_e
 
 This matches the local 7-day proof row count and status counts. Do not blindly re-execute this temporary job:
 the command contains a fixed run id and the runner intentionally refuses to overwrite existing GCS prefixes.
-For additional remote batches, deploy/update the job with a new run id or move to the durable image workflow.
+Historical note: this bootstrap job proved remote execution before the durable image path was available. Do
+not use it for repeated fanout now that the durable image workflow works.
 
 Fourteen-day Cloud Run proof:
 
@@ -479,8 +506,8 @@ The full accepted MRMS denominator is **not running yet**.
 
 Next operational step:
 
-1. fix or explicitly accept the image strategy for repeated fanout;
-2. choose sequential job updates vs task-indexed fanout for the 148 planned batches;
+1. choose sequential job updates vs task-indexed fanout for the 148 planned batches;
+2. choose the full-run `run_id`;
 3. launch the full 148-batch denominator only after that execution choice is pinned.
 
 Current recommendation:

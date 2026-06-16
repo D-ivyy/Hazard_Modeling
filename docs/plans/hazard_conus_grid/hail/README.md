@@ -163,6 +163,23 @@ gcs:    gs://infrasure-benchmark/hazard_conus_grid/dev/hail/v1_mrms_only/m0_dail
 The 7-day proof wrote 91,595 rows and matched the local proof counts exactly. The 14-day proof wrote 183,190
 rows. These are `cloud_proof` outputs, not the full historical CONUS run.
 
+The durable GitHub Actions / Artifact Registry / Cloud Run Job path has also succeeded after moving the repo
+under the `aamani-ai` organization:
+
+```text
+workflow:  Deploy Hazard CONUS Grid MRMS M0 Job
+run:       27649989510
+job:       hazard-conus-grid-mrms-m0
+execution: hazard-conus-grid-mrms-m0-lcqqg
+run_id:    20260616T214036Z_wif_deploy_probe
+batch:     2024-06-01 to 2024-06-07
+gcs:       gs://infrasure-benchmark/hazard_conus_grid/dev/hail/v1_mrms_only/m0_daily_cell_evidence/run_id=20260616T214036Z_wif_deploy_probe/batch=20240601_20240607/
+```
+
+This proves the durable image path. Future repeated Cloud Run batches should use
+`hazard-conus-grid-mrms-m0`, not the earlier bootstrap job, unless debugging specifically needs the bootstrap
+fallback.
+
 The first reconciliation proof has also succeeded:
 
 ```text
@@ -182,11 +199,12 @@ Treat current hail grid outputs in three groups:
 | Group | Examples | Meaning |
 |---|---|---|
 | Research / selected-cell proof | `selected_pilot_cells_*`, `m1_selected_cell_*`, MYRORSS selected-cell scans, solar smoke outputs | Interface and source-learning evidence only. |
-| M0 proof outputs | `m0_mrms_v1_one_day_proof/`, `run_id=20260616T172929Z`, `run_id=20260616T205852Z_cloudrun_bootstrap_7d` | Row contract, remote execution, and GCS write proof. |
+| M0 proof outputs | `m0_mrms_v1_one_day_proof/`, `run_id=20260616T172929Z`, `run_id=20260616T205852Z_cloudrun_bootstrap_7d`, `run_id=20260616T214036Z_wif_deploy_probe` | Row contract, remote execution, durable image, and GCS write proof. |
 | Main V1 build candidates | future `dev_full` M0/M1 runs under `v1_mrms_only/` after reconciliation is ready | Inputs to M1 and later M2-M4. |
 
-The full MRMS denominator is not running yet. The next hail cloud step is to fix or explicitly accept the
-durable-image/fanout strategy, then launch the full accepted source-date denominator.
+The full MRMS denominator is not running yet. The durable image path is now proven. The next hail cloud step is
+to choose the full-run fanout mode, choose one shared full-run `run_id`, then launch the accepted source-date
+denominator.
 
 ## Current Solar Smoke Test
 

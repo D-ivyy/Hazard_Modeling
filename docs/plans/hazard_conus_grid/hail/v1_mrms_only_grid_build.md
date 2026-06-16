@@ -293,12 +293,12 @@ The local proof is done and `gcloud` bucket listing works. Current known choices
 | Cloud Run M0 evidence proof | Run `20260616T205852Z_cloudrun_bootstrap_7d`, batch `20240601_20240607`, wrote 91,595 rows; matched local proof counts. |
 | Cloud Run 14-day proof | Run `20260616T211247Z_m0_batch0001_14d_cloud_proof`, batch `20201014_20201027`, wrote 183,190 rows. |
 | M0 reconciliation proof | Run `20260616T211844Z_m0_reconcile_2batch_proof`, reconciled 2 batch prefixes, 21 dates, 274,785 rows, duplicate `cell_id/date` rows = 0. |
+| Durable image / Cloud Run Job proof | GitHub Actions run `27649989510` deployed `hazard-conus-grid-mrms-m0`; execution `hazard-conus-grid-mrms-m0-lcqqg` wrote 91,595 rows for `20240601_20240607`. |
 
 Still needed before large batch processing:
 
 | Needed item | Why |
 |---|---|
-| Durable image path | GitHub Actions WIF currently rejects this repo, and the successful Cloud Run proof used a bootstrap job. |
 | Full-run `run_id` | One shared run id must address all full-denominator M0 batches. |
 | Batch fanout mode | Choose sequential job updates, per-batch jobs, or task-indexed fanout. |
 | Full-run reconciliation policy | The proof works for two non-overlapping batches; the full run still needs the accepted-batch registry and final full-denominator acceptance rule. |
@@ -338,13 +338,13 @@ GCS path:
 gs://infrasure-benchmark/hazard_conus_grid/dev/hail/v1_mrms_only/m0_daily_cell_evidence/run_id=20260616T172929Z/batch=20240601_20240607/
 ```
 
-The immediate operational task is to choose Cloud Run Jobs versus Cloud Batch/VM from the measured result and
-confirmed remote-write behavior. That decision is now Cloud Run Jobs for proofs and likely M0 fanout, with a
-durable-image/WIF issue still to fix before repeated full fanout.
+The immediate operational task is no longer a permissions fix. Cloud Run Jobs, GCS writes, and the durable
+GitHub Actions image path are proven. The remaining choice is how to fan out the 148 planned 14-day batches:
+sequential job updates, per-batch jobs, or a task-indexed Cloud Run Job.
 
 Next:
 
-1. Fix or explicitly accept the durable image / fanout strategy.
+1. Choose the full-run fanout mode and one shared full-run `run_id`.
 2. Launch the full accepted MRMS denominator.
 3. Reconcile the full batch set before M1.
 
