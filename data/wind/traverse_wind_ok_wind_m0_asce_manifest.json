@@ -1,0 +1,71 @@
+{
+  "layer": "M0",
+  "source": "01_asce_hazard",
+  "peril": "wind",
+  "sub_peril": "strong_wind (+ Ch-32 tornado cross-check)",
+  "asset": {
+    "slug": "traverse_wind_ok",
+    "name": "Traverse Wind Energy Center",
+    "role": "proving (high-wind)",
+    "state": "OK",
+    "county": "Custer",
+    "lat": 35.713427,
+    "lon": -98.728532,
+    "capacity_mw": 999.0,
+    "turbines": 346,
+    "turbine_model": "GE 2.8-127 (~2.8 MW)"
+  },
+  "product": "ASCE 7-22 wind-hazard maps (Ch. 26 basic wind + Appendix F + Ch. 32 tornado)",
+  "edition_doi": "ASCE/SEI 7-22 (Minimum Design Loads and Associated Criteria for Buildings and Other Structures)",
+  "access": "ASCE Hazard Tool ArcGIS backend (gis.asce.org/arcgis/rest/services/ASCE722) \u2014 identify point query, no auth",
+  "units": {
+    "gust": "3-s peak gust @ 33 ft (10 m), Exposure C, mph"
+  },
+  "exposure": "C",
+  "site_coords": {
+    "lat": 35.713427,
+    "lon": -98.728532
+  },
+  "rc_to_mri_years": {
+    "I": 300,
+    "II": 700,
+    "III": 1700,
+    "IV": 3000
+  },
+  "rc_gust_mph": {
+    "I": 102.7,
+    "II": 110.0,
+    "III": 115.4,
+    "IV": 120.0
+  },
+  "mri_curve_mph": {
+    "10": 75.9,
+    "25": 83.5,
+    "50": 88.9,
+    "100": 94.5,
+    "300": 102.7,
+    "700": 110.0,
+    "1700": 115.4,
+    "3000": 120.0,
+    "10000": 130.1,
+    "100000": 150.0,
+    "1000000": 168.8
+  },
+  "appendix_f_available": true,
+  "tornado_ch32_note": "Ch-32 caps ~EF2, RC III/IV, A\u2091-dependent \u2014 cross-check only; tornado spine = SPC (02)",
+  "checks": {
+    "monotone_mri_gust": true,
+    "n_wind_mri": 11
+  },
+  "caveats": [
+    "undocumented ArcGIS backend \u2014 values cached; re-verify endpoint at re-run",
+    "Exposure C @ 33 ft \u2014 hub-height/terrain adjustment deferred to M2 (AWN-15)",
+    "ASCE governs building-like assets; turbine fragility anchors = IEC 61400/NESC (AWN-9/10)",
+    "data normally licensed; point lookups of published design values, cached for research"
+  ],
+  "open_questions": [
+    "M1: strong-wind catalog = profile-assembly off this surface (no \u03bb-fit) per DD-WN-3/AWN-15",
+    "M2: hub-height + terrain (Exp C\u2192site) adjustment of the gust",
+    "M3: anchor the turbine curve at IEC survival, not the 58 mph event threshold"
+  ]
+}
