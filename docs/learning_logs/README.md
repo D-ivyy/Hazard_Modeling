@@ -80,6 +80,7 @@ competitive-research `learnings/architecture/` folder does. **Don't pre-create s
 | [08](08_oozing_developed_pixels.md) | The asset pixel can be a hole — rasters ooze frequency onto developed land but suppress intensity | method · forward-looking | wildfire × solar · M0 / [AW-15](../plans/wildfire/assumptions.md) | any site-conditioned peril read at a developed/engineered site |
 | [09](09_pre_integrated_vs_extracted_catalog.md) | When the simulator pre-integrates the event set, M1 is profile-assembly, not event-extraction (and λ comes from a different place) | method · anti-pattern | wildfire × solar · M1 / [DD-W7](../plans/wildfire/decisions.md) | every peril at M1 — classify pre-integrated vs raw-evidence before choosing catalog/frequency machinery |
 | [10](10_monte_carlo_effective_sample_size.md) | A Monte Carlo metric is only as precise as its *effective* sample — and a known-answer tolerance must track that, not a fixed band | method · anti-pattern | wildfire × solar · M4 / [DD-W7](../plans/wildfire/decisions.md) | every peril reading metrics off an MC — acutely rare perils (low λ) and deep-tail PMLs |
+| [11](11_densify_sparse_rp_anchor_the_shape.md) | Densifying a sparse return-period curve — anchor a regional *shape* to your real points, don't import a heavier absolute model (the anchors cancel the weak inputs) | method · anti-pattern | flood × solar · M1/M4 / [JD-FL-8](../plans/flood/decisions.md) | any peril holding a sparse RP intensity curve whose frequent end must be filled for a trustworthy EAL |
 
 *Sub-folders in this tree:* none yet (see the naming rule above).
 
@@ -122,4 +123,4 @@ The decision it generalizes, the principle it serves, the reference it builds on
 
 ---
 
-**Last update:** 2026-06-13 — added entry 10 (Monte Carlo effective sample size & the self-calibrating known-answer tolerance), from wildfire M4. Earlier same-day: 07 (one simulation, two products), 08 (the oozing trap), 09 (pre-integrated vs extracted catalog), from wildfire M0–M1.
+**Last update:** 2026-06-17 — added entry 11 (densifying a sparse return-period curve by anchoring a regional shape to real points; the anchors cancel the weak inputs), from flood × solar M1/M4 EAL-hardening. Prior: 2026-06-13 — entry 10 (Monte Carlo effective sample size), from wildfire M4.

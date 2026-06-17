@@ -1,0 +1,60 @@
+{
+  "peril": "flood",
+  "sub_peril": "riverine",
+  "event_family_id": null,
+  "layer": "M4",
+  "event_model": "annual-maximum MC sampling the (JD-FL-8 densified) RP loss curve (JD-FL-7)",
+  "n_sim_years": 500000,
+  "onset_aep": 0.1,
+  "rp_points_per_site": {
+    "Elizabeth Solar Plant": [
+      10,
+      25,
+      50,
+      100,
+      500
+    ],
+    "Hayhurst Texas Solar": [
+      100,
+      500
+    ]
+  },
+  "metric_frame": "per-year loss vectors; PML_T = (1-1/T) percentile (DD-4)",
+  "caveats": [
+    "EAL densified (JD-FL-8) \u2014 lower RPs (10/25/50-yr) are regression flow-frequency depths anchored to both BLE depths; see \u00a72b vs the old assumed-onset method.",
+    "PML@100/500-yr anchored to real BLE depth (solid); regression-Q standard error not yet propagated as an MC overlay.",
+    "value\u221darea exposure; Elizabeth TIV estimated; medium-confidence curves; duration unmodeled"
+  ],
+  "metrics": [
+    {
+      "name": "Elizabeth Solar Plant",
+      "role": "proving (high-flood)",
+      "tiv_usd": 211772400,
+      "EAL_pct": 0.15,
+      "EAL_usd": 323119.47,
+      "VaR99_pct": 2.62,
+      "TVaR99_pct": 3.76,
+      "PML100_pct": 2.62,
+      "PML250_pct": 3.65,
+      "PML500_pct": 4.46,
+      "PML100_usd": 5539207.95,
+      "PML250_usd": 7738813.73,
+      "PML500_usd": 9455316.6
+    },
+    {
+      "name": "Hayhurst Texas Solar",
+      "role": "baseline (low-flood)",
+      "tiv_usd": 36778400,
+      "EAL_pct": 0.02,
+      "EAL_usd": 5919.8,
+      "VaR99_pct": 0.13,
+      "TVaR99_pct": 0.16,
+      "PML100_pct": 0.13,
+      "PML250_pct": 0.4,
+      "PML500_pct": 0.62,
+      "PML100_usd": 47811.92,
+      "PML250_usd": 148443.38,
+      "PML500_usd": 227841.62
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "peril": "flood",
+  "sub_peril": "riverine",
+  "event_family_id": null,
+  "layer": "M4",
+  "asset": "wind_farm",
+  "event_model": "annual-maximum MC sampling the loss-exceedance curve (JD-FL-7, reused from flood \u00d7 solar)",
+  "n_sim_years": 500000,
+  "onset_aep": 0.1,
+  "metric_frame": "per-year loss vectors; PML_T = (1-1/T) percentile (DD-4)",
+  "caveats": [
+    "EAL approximate (frequent region rests on the 10-yr onset anchor)",
+    "conditional losses rest on the extent-based bathtub depth (Zone A, no BFE/BLE) + greenfield curve",
+    "loss summed over flooded turbines + substation (per-node, not areal); rotor/nacelle/tower immune",
+    "substation/pad/hull/TIV assumptions carried from M0\u2013M3 (low-medium confidence)"
+  ],
+  "metrics": [
+    {
+      "name": "Green River",
+      "role": "proving (high-flood)",
+      "tiv_usd": 271880000.0,
+      "EAL_pct": 0.4486,
+      "EAL_usd": 1219782.5686,
+      "VaR99_pct": 11.1435,
+      "TVaR99_pct": 12.4666,
+      "PML100_pct": 11.1435,
+      "PML250_pct": 12.3434,
+      "PML500_pct": 13.2797,
+      "PML100_usd": 30296995.7819,
+      "PML250_usd": 33559166.2283,
+      "PML500_usd": 36104861.0009
+    },
+    {
+      "name": "Shepherds Flat",
+      "role": "baseline (low-flood)",
+      "tiv_usd": 1183000000.0,
+      "EAL_pct": 0.0,
+      "EAL_usd": 0.0,
+      "VaR99_pct": 0.0,
+      "TVaR99_pct": 0.0,
+      "PML100_pct": 0.0,
+      "PML250_pct": 0.0,
+      "PML500_pct": 0.0,
+      "PML100_usd": 0.0,
+      "PML250_usd": 0.0,
+      "PML500_usd": 0.0
+    }
+  ]
+}

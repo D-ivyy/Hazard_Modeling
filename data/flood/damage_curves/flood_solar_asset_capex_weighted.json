@@ -1,0 +1,64 @@
+{
+  "curve_id": "flood/solar__asset__capex_weighted",
+  "hazard_type": "RIVERINE_FLOOD",
+  "asset_type": "solar",
+  "intensity_metric": "flood_depth_ft",
+  "intensity_unit": "ft",
+  "logistic_form": "DR(x) = L / (1 + exp(-k*(x - x0)))",
+  "anchoring": "minus DR(0) so DR(0)=0",
+  "aggregation": "Asset_DR = \u03a3 w\u1d62\u00b7DR\u1d62_anchored; uncovered\u21920; loss = exposure \u00d7 Asset_DR(conditional_depth) \u00d7 TIV",
+  "subsystems": [
+    {
+      "subsystem": "PV_ARRAY",
+      "capex_weight": 0.32,
+      "L": 0.9,
+      "k": 1.8,
+      "x0_ft": 2.5,
+      "curve_id": "flood/pv_array_tracker_horizontal"
+    },
+    {
+      "subsystem": "INVERTER_SYSTEM",
+      "capex_weight": 0.08,
+      "L": 0.95,
+      "k": 3.5,
+      "x0_ft": 0.75,
+      "curve_id": "flood/inverter_system_generic"
+    },
+    {
+      "subsystem": "SUBSTATION",
+      "capex_weight": 0.07,
+      "L": 0.95,
+      "k": 2.5,
+      "x0_ft": 1.5,
+      "curve_id": "flood/substation_generic"
+    },
+    {
+      "subsystem": "ELECTRICAL",
+      "capex_weight": 0.1,
+      "L": 0.55,
+      "k": 1.0,
+      "x0_ft": 3.0,
+      "curve_id": "flood/electrical_cables_generic"
+    },
+    {
+      "subsystem": "CIVIL_INFRA",
+      "capex_weight": 0.08,
+      "L": 0.7,
+      "k": 1.2,
+      "x0_ft": 2.0,
+      "curve_id": "flood/civil_infra_generic"
+    }
+  ],
+  "uncovered_subsystems_zero_damage": {
+    "MOUNTING": 0.1,
+    "SCADA": 0.03,
+    "note": "no flood curve \u2192 flood-immune"
+  },
+  "metadata": {
+    "source_repo": "infrasure-damage-curves (Divi-patel/infrasure-damage-curves)",
+    "component_curves": "research/FLOOD_x_SOLAR.md via master_curve_index.json (RIVERINE_FLOOD \u00d7 solar, priority 4)",
+    "capex_weights": "NREL solar BoS (vendored from hail_solar_asset_capex_weighted.json) \u2014 peril-independent",
+    "confidence": "medium; x0 encodes component elevation (the flood inversion); duration unmodeled (Gen-1)",
+    "pv_variant": "single-axis horizontal stow (x0 2.5 ft); flood-stow (x0 7 ft) = mitigation lever"
+  }
+}

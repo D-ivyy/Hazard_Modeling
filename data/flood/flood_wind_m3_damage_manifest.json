@@ -1,0 +1,59 @@
+{
+  "peril": "flood",
+  "sub_peril": "riverine",
+  "event_family_id": null,
+  "layer": "M3",
+  "asset": "wind_farm",
+  "curve": "GREENFIELD flood \u00d7 wind capex-weighted per-node (low-medium confidence)",
+  "conditional_loss_rule": "\u03a3 over flooded turbines (base subsystems) + shared substation",
+  "sites": [
+    {
+      "slug": "green_river_il",
+      "name": "Green River",
+      "role": "proving (high-flood)",
+      "rp_years": 100,
+      "tiv_usd": 271880000.0,
+      "n_flooded": 22,
+      "turb_loss_frac_tiv": 0.02789,
+      "sub_loss_frac_tiv": 0.08348,
+      "cond_loss_frac_tiv": 0.11137,
+      "cond_loss_usd": 30279546
+    },
+    {
+      "slug": "green_river_il",
+      "name": "Green River",
+      "role": "proving (high-flood)",
+      "rp_years": 500,
+      "tiv_usd": 271880000.0,
+      "n_flooded": 33,
+      "turb_loss_frac_tiv": 0.04898,
+      "sub_loss_frac_tiv": 0.08354,
+      "cond_loss_frac_tiv": 0.13251,
+      "cond_loss_usd": 36027091
+    },
+    {
+      "slug": "shepherds_flat_or",
+      "name": "Shepherds Flat",
+      "role": "baseline (low-flood)",
+      "rp_years": 100,
+      "tiv_usd": 1183000000.0,
+      "n_flooded": 0,
+      "turb_loss_frac_tiv": 0.0,
+      "sub_loss_frac_tiv": 0.0,
+      "cond_loss_frac_tiv": 0.0,
+      "cond_loss_usd": 0
+    },
+    {
+      "slug": "shepherds_flat_or",
+      "name": "Shepherds Flat",
+      "role": "baseline (low-flood)",
+      "rp_years": 500,
+      "tiv_usd": 1183000000.0,
+      "n_flooded": 0,
+      "turb_loss_frac_tiv": 0.0,
+      "sub_loss_frac_tiv": 0.0,
+      "cond_loss_frac_tiv": 0.0,
+      "cond_loss_usd": 0
+    }
+  ]
+}

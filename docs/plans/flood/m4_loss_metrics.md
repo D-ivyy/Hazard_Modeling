@@ -1,0 +1,45 @@
+# M4 — Loss & metrics (the plan)
+
+*Phase 5 (final) of the flood × solar build. Turn M3 conditional losses → the **annual loss distribution** →
+EAL / VaR / PML / TVaR (% of TIV + dollars), on the shared metric frame.* Per-phase loop
+([feature_workflow](../../workflows/feature_workflow.md)).
+
+> **Event-model bridge = [JD-FL-7](decisions.md).** Riverine flood = **annual-maximum** (~1 damaging flood/yr). Build
+> a **loss-exceedance curve** straight from the M3 conditional losses — now a **5-point** RP curve for the proving site
+> (10/25/50/100/500-yr) after the **[JD-FL-8](decisions.md) densification**: 100/500-yr are **real BLE**; 10/25/50-yr
+> are a **regression flow-frequency rating anchored to both BLE depths** (no assumed onset). The MC draws `AEP ~ U(0,1)`
+> → `loss(AEP)` (log-AEP interp, bounded extrap) → per-year loss vectors → the shared **EAL/VaR/PML/TVaR** (DD-4).
+
+## Method
+- **MC:** N=500k simulated years; annual loss = `loss(AEP)`; metrics off the per-year vectors. `PML_T = (1−1/T)`
+  percentile (DD-4 frame, shared with hail/wildfire/wind → Total-Loss-combinable).
+- **Seam:** M1 emits a variable-length, source-tagged RP→loss profile; `loss_at_aep` is generic → densifying (more
+  RP points) is a one-place change.
+
+## Result (built — `solar/m4_loss_metrics/01_loss_metrics`, EAL-densified per JD-FL-8)
+| site | EAL | VaR99 | PML100 | PML500 | TVaR99 |
+|---|---|---|---|---|---|
+| **Elizabeth** (high) | **0.15% TIV** | 2.62% | 2.62% | **4.46%** | 3.76% |
+| Hayhurst (low) | 0.02% | 0.13% | 0.13% | 0.62% | 0.16% |
+
+**Frame check ✓** PML@100/500 reproduce the BLE-anchored L₁₀₀/L₅₀₀ by construction.
+**Densification (JD-FL-8) ✓** Elizabeth EAL 0.13% → **0.155%** (+18%): the real 10-yr depth ≈ **0.97 ft** (regression
+rating), deeper than the old assumed 0.5 ft, plus added 25/50-yr points. The densified EAL lands at the old
+"assumed@1.0 ft" guess — an independent cross-check. PML@100/500 unchanged.
+
+## External validation (sanity-check ✅)
+- **Depth-damage** tracks HAZUS electrical/contents norms (heavy damage by 1–3 ft; inverter ~87% at 2 ft).
+- **EAL** → implied AAL of the exposed area, inside the **NFIP SFHA norm (0.5–1.5%/yr)**.
+- **Internal:** PML100=VaR99 (frame ✓); PML500/PML100 = 1.7×; EAL/PML100 ≈ 0.06 (rare heavy-tail). No red flags.
+
+## Honest caveats
+- **EAL now densified** (JD-FL-8) — the frequent region rests on **measurement-anchored 10/25/50-yr depths** (regression
+  flow-frequency rating pinned to both BLE depths), not a flat onset guess; **robust to channel slope** (the rating
+  exponent absorbs it — M1 finding). **PML@100/500-yr stays BLE-grounded.**
+- Regression-Q **standard error not yet propagated** as an MC overlay · `value ∝ area` exposure · Elizabeth TIV
+  estimated · medium-confidence curves · **duration/BI unmodeled** (Gen-1).
+
+## Hardening (seam-ready, no rework)
+1. ~~Densify the frequent floods~~ **done (JD-FL-8)** — regression flow-frequency + BLE-anchored rating.
+2. Propagate the **regression-Q standard error** as an MC overlay (distributional EAL); swap **live HAND-SRC** depth if
+   the delineation service returns; the **enriched polygon / Fathom depth**; **duration/BI**; the **PV flood-stow** lever.

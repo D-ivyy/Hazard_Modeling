@@ -1,0 +1,71 @@
+{
+  "peril": "flood",
+  "sub_peril": "riverine",
+  "event_family_id": null,
+  "layer": "M2",
+  "asset": "wind_farm",
+  "coupling_type": "site_conditioned_per_node (bucket 3) \u2014 point cloud; depth pre-coupled at each node in M1",
+  "contract": {
+    "per_node_depths": "<slug>_flood_wind_m1_depths.parquet (turbine + substation depth_{rp}_m)",
+    "flooded_fraction": "fraction of turbines with depth>0 at the RP",
+    "loss_rule_for_M3": "sum over flooded turbines (per-subsystem DR) + the shared substation \u2014 NOT an areal product"
+  },
+  "assumptions": [
+    "exposure = identity+depth of flooded turbines (point cloud), not areal fraction \u00d7 depth",
+    "substation is a single shared node (one collection substation per farm)"
+  ],
+  "rows": [
+    {
+      "slug": "green_river_il",
+      "name": "Green River",
+      "role": "proving (high-flood)",
+      "rp_years": 100,
+      "aep": 0.01,
+      "n_turb": 74,
+      "n_flooded": 22,
+      "flooded_fraction": 0.2973,
+      "turb_depth_mean_m": 0.73,
+      "substation_depth_m": 1.355,
+      "coupling_type": "site_conditioned_per_node"
+    },
+    {
+      "slug": "green_river_il",
+      "name": "Green River",
+      "role": "proving (high-flood)",
+      "rp_years": 500,
+      "aep": 0.002,
+      "n_turb": 74,
+      "n_flooded": 33,
+      "flooded_fraction": 0.4459,
+      "turb_depth_mean_m": 0.982,
+      "substation_depth_m": 1.955,
+      "coupling_type": "site_conditioned_per_node"
+    },
+    {
+      "slug": "shepherds_flat_or",
+      "name": "Shepherds Flat",
+      "role": "baseline (low-flood)",
+      "rp_years": 100,
+      "aep": 0.01,
+      "n_turb": 384,
+      "n_flooded": 0,
+      "flooded_fraction": 0.0,
+      "turb_depth_mean_m": 0.0,
+      "substation_depth_m": 0.0,
+      "coupling_type": "site_conditioned_per_node"
+    },
+    {
+      "slug": "shepherds_flat_or",
+      "name": "Shepherds Flat",
+      "role": "baseline (low-flood)",
+      "rp_years": 500,
+      "aep": 0.002,
+      "n_turb": 384,
+      "n_flooded": 0,
+      "flooded_fraction": 0.0,
+      "turb_depth_mean_m": 0.0,
+      "substation_depth_m": 0.0,
+      "coupling_type": "site_conditioned_per_node"
+    }
+  ]
+}

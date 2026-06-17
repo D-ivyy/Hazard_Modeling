@@ -1,0 +1,6 @@
+p_name,state,county,n_turb,n_sfha,frac_sfha,mw
+Green River,IL,Lee County,74,44,0.595,194.2
+Barton,IA,Worth County,80,13,0.163,160.0
+Walnut Ridge,IL,Bureau County,106,10,0.094,212.0
+Century,IA,Hamilton County,100,4,0.04,150.0
+Beaver Creek,IA,Greene County,85,2,0.024,170.0

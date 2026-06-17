@@ -1,0 +1,61 @@
+{
+  "curve_id": "flood/wind__asset__capex_weighted",
+  "hazard_type": "RIVERINE_FLOOD",
+  "asset_type": "wind",
+  "status": "GREENFIELD (no flood\u00d7wind curve in infrasure-damage-curves) \u2014 graduates to the library later",
+  "confidence": "low-medium",
+  "intensity_metric": "flood_depth_ft",
+  "intensity_unit": "ft",
+  "logistic_form": "DR(x) = L/(1+exp(-k(x-x0))) anchored so DR(0)=0",
+  "capex_weights": {
+    "rotor_blades": 0.26,
+    "nacelle_drivetrain": 0.21,
+    "tower": 0.16,
+    "foundation": 0.12,
+    "electrical": 0.09,
+    "civil": 0.07,
+    "substation": 0.09
+  },
+  "flood_immune": {
+    "rotor_blades": 0.26,
+    "nacelle_drivetrain": 0.21,
+    "tower": 0.16
+  },
+  "vulnerable_curves": {
+    "electrical": {
+      "L": 0.9,
+      "k": 3.0,
+      "x0_ft": 0.75,
+      "source": "\u2248 solar inverter curve (down-tower switchgear drowns shallow)"
+    },
+    "substation": {
+      "L": 0.95,
+      "k": 2.5,
+      "x0_ft": 1.5,
+      "source": "\u2248 solar substation curve (collector transformer/switchgear)"
+    },
+    "civil": {
+      "L": 0.7,
+      "k": 1.2,
+      "x0_ft": 2.0,
+      "source": "\u2248 solar civil_infra curve (pad/road scour)"
+    },
+    "foundation": {
+      "L": 0.4,
+      "k": 0.8,
+      "x0_ft": 3.0,
+      "source": "judgment: massive RC pier \u2014 only deep/sustained flood scours/saturates it"
+    }
+  },
+  "node_model": {
+    "turbine_value": "0.91\u00b7TIV/N each (rotor+nacelle+tower immune; foundation+electrical+civil vulnerable)",
+    "substation_value": "0.09\u00b7TIV (single shared collector node, vulnerable)",
+    "loss_rule": "loss = (1/N)\u00b7\u03a3_i \u03a3_s\u2208{found,elec,civil} w\u209b\u00b7DR\u209b(d\u1d62)\u00b7TIV + w_sub\u00b7DR_sub(d_sub)\u00b7TIV"
+  },
+  "metadata": {
+    "capex_source": "old-repo wind_config / convective_wind (rotor .26 nacelle .21 tower .16 found .12 sub .09 elec .09 civil .07)",
+    "shapes_borrowed_from": "infrasure-damage-curves RIVERINE_FLOOD \u00d7 solar (inverter\u2192electrical, substation, civil)",
+    "foundation_curve": "by judgment (massive RC; high threshold, shallow slope)",
+    "physics": "height inversion at the limit \u2014 rotor/nacelle/tower elevated \u2192 flood-immune; only the base floods"
+  }
+}
