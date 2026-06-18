@@ -1,0 +1,62 @@
+{
+  "layer": "M0",
+  "source": "02_spc_storm_record",
+  "peril": "wind",
+  "asset": {
+    "slug": "shepherds_flat_or",
+    "name": "Shepherds Flat",
+    "role": "baseline (low-wind)",
+    "state": "OR",
+    "lat": 45.653389,
+    "lon": -120.036724,
+    "capacity_mw": 845.0
+  },
+  "products": {
+    "tornado": "SPC WCM 1950-2025_actual_tornadoes.csv (path geometry + EF; public domain)",
+    "wind": "SPC WCM 1955-2025_wind.csv (severe-wind reports, knots; public domain)",
+    "storm_events": "NOAA Storm Events (NCEI) \u2014 episode structure + MAGNITUDE_TYPE (recent year)"
+  },
+  "collection_radius_km": 150.0,
+  "window_years": {
+    "tornado": [
+      1950,
+      2025
+    ],
+    "wind": [
+      1955,
+      2025
+    ]
+  },
+  "near_site_counts": {
+    "tornado": 36,
+    "wind_reports": 337
+  },
+  "ef_distribution": {
+    "unknown": 1,
+    "EF0": 28,
+    "EF1": 5,
+    "EF2": 2
+  },
+  "units": {
+    "tornado_mag": "EF/F class (-9=unknown)",
+    "wind_mag": "knots",
+    "len": "miles",
+    "wid": "yards"
+  },
+  "BIAS_CORRECTION_TODO": {
+    "status": "NOT corrected here \u2014 M0 audits only",
+    "issues": [
+      "weak-event detection rises ~0.61\u21920.90 share over decades",
+      "F\u2192EF scale change in 2007",
+      "-9 unknown ratings concentrated post-2010 (handle explicitly)",
+      "wind reports ~20% zero-magnitude, ~92% estimated, left-censored at ~50 kt (58 mph)"
+    ],
+    "rule": "bias-correct BEFORE fitting \u03bb; do NOT silently filter to 1996+ (old-repo omission)"
+  },
+  "ignored_fields": [
+    "loss",
+    "closs",
+    "DAMAGE_PROPERTY (non-PV $ basis \u2014 the hail hail_hlrb/TIV lesson)"
+  ],
+  "stationarity_note": "v1 stationary \u03bb; flag eastward 'Dixie Alley' drift, do not freeze (AWN-19)"
+}
