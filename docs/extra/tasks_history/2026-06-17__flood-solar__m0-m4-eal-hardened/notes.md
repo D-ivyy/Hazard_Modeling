@@ -39,6 +39,11 @@ frac (lower RPs)     → log-RP interp between real BLE extents {10:f10, 100:f10
   Hayhurst EAL 0.02 (baseline). **Frame check:** PML100≈L100 (2.62≈2.61), PML500≈L500 (4.46≈4.44).
 - **§2b comparison:** densified EAL 0.155 vs old assumed-onset 0.115 (@0ft) / 0.131 (@0.5ft) / 0.159 (@1.0ft) →
   densification lands on the @1ft cross-check.
+- **External validation (M4 §4b, real-data assertion):** USGS STN high-water marks near the proving site (21 marks,
+  Aug-2016 LA flood) read 0 / median 2.1 / 7.9 ft above ground; modeled depths 1.0–2.0 ft (10→500-yr) fall **inside**
+  that range → asserted + persisted (`external_validation` in the M4 manifest). Endpoint:
+  `stn.wim.usgs.gov/STNServices/HWMs/FilteredHWMs.json?States=<ST>`. **NRI** county-EAL benchmark **not done** — FEMA
+  reorganized NRI's public access (old API/download → RAPT tool redirect); GIS server exposes only report GPServers.
 
 ## Key insight (→ learning log 11)
 

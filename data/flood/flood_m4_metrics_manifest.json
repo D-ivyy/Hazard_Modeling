@@ -25,6 +25,23 @@
     "PML@100/500-yr anchored to real BLE depth (solid); regression-Q standard error not yet propagated as an MC overlay.",
     "value\u221darea exposure; Elizabeth TIV estimated; medium-confidence curves; duration unmodeled"
   ],
+  "external_validation": {
+    "source": "USGS STN high-water marks (regional, Aug-2016 LA flood era)",
+    "n_marks": 21,
+    "observed_ft": {
+      "min": 0.0,
+      "median": 2.06,
+      "max": 7.9
+    },
+    "modeled_depth_ft": [
+      0.98,
+      1.2,
+      1.36,
+      1.52,
+      1.98
+    ],
+    "model_within_observed": true
+  },
   "metrics": [
     {
       "name": "Elizabeth Solar Plant",

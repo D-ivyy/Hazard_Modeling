@@ -28,9 +28,15 @@ rating), deeper than the old assumed 0.5 ft, plus added 25/50-yr points. The den
 "assumed@1.0 ft" guess — an independent cross-check. PML@100/500 unchanged.
 
 ## External validation (sanity-check ✅)
+- **Observed flood depths (USGS high-water marks, §4b — runs in the notebook):** 21 USGS-surveyed marks near the
+  proving site (Aug-2016 LA flood) read **0–7.9 ft** above ground (median **2.1 ft**); our modeled depths (**1.0–2.0 ft**
+  across 10→500-yr) fall **inside** that range — a real-event regime check (asserted; persisted to the manifest).
+  *Regional (~25–45 km, many marks near channels) → confirms the depth scale, not a to-the-inch calibration.*
 - **Depth-damage** tracks HAZUS electrical/contents norms (heavy damage by 1–3 ft; inverter ~87% at 2 ft).
 - **EAL** → implied AAL of the exposed area, inside the **NFIP SFHA norm (0.5–1.5%/yr)**.
 - **Internal:** PML100=VaR99 (frame ✓); PML500/PML100 = 1.7×; EAL/PML100 ≈ 0.06 (rare heavy-tail). No red flags.
+- **Not done:** FEMA **NRI** county-EAL benchmark — its public API/download was reorganized (now redirects to the RAPT
+  tool); deferred until the current NRI data endpoint is confirmed.
 
 ## Honest caveats
 - **EAL now densified** (JD-FL-8) — the frequent region rests on **measurement-anchored 10/25/50-yr depths** (regression

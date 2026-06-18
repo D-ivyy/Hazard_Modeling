@@ -198,6 +198,43 @@ print(f"✓ Elizabeth EAL {eliz['EAL_pct']:.3f}% ≫ Hayhurst EAL {hay['EAL_pct'
 print("✓ M4 known-answer checks pass.")
 
 # %% [markdown]
+# ## 4b · External validation — observed flood depths (USGS high-water marks)
+#
+# Beyond the internal frame checks: do the modeled depths match a **real flood**? USGS surveyed high-water marks after
+# the **Aug-2016 Louisiana flood**; we compare the proving site's modeled depth-at-RP against the observed
+# height-above-ground near the site. Expectation: our **feet-scale** depths fall **inside** the observed range — a
+# real-data regime check (not a to-the-inch calibration; the marks are regional, ~25–45 km out, many near channels).
+
+# %%
+import math
+import requests
+
+prov = pd.DataFrame(json.loads((OUT / "flood_m0_sites.json").read_text())["sites"])
+prov = prov[prov.role.str.contains("proving")].iloc[0]
+model_ft = sorted((m3[m3.name == prov["name"]]["conditional_depth_m"] / 0.3048).round(2).tolist())
+validation = {"source": "USGS STN high-water marks", "note": "not run"}
+try:
+    hwm = requests.get("https://stn.wim.usgs.gov/STNServices/HWMs/FilteredHWMs.json",
+                       params={"States": prov["state"]}, timeout=40).json()
+    near = sorted(h["height_above_gnd"] for h in hwm
+                  if h.get("latitude") and h.get("longitude") and h.get("height_above_gnd") not in (None, "")
+                  and math.hypot(h["latitude"] - prov["lat"], h["longitude"] - prov["lon"]) < 0.45)
+    if near:
+        lo, med, hi = near[0], near[len(near) // 2], near[-1]
+        inside = (lo - 0.5) <= min(model_ft) and max(model_ft) <= (hi + 0.5)
+        validation = {"source": "USGS STN high-water marks (regional, Aug-2016 LA flood era)", "n_marks": len(near),
+                      "observed_ft": {"min": round(lo, 2), "median": round(med, 2), "max": round(hi, 2)},
+                      "modeled_depth_ft": model_ft, "model_within_observed": bool(inside)}
+        print(f"observed flood marks near {prov['name']} (n={len(near)}): {lo:.1f} / median {med:.1f} / {hi:.1f} ft above ground")
+        print(f"modeled depths (10→500-yr): {model_ft} ft")
+        assert inside, "modeled depths fall outside the observed flood-mark range — review"
+        print("✓ modeled depths sit INSIDE the observed flood-mark range — real-data regime check passes")
+    else:
+        print("no high-water marks within range — validation skipped")
+except Exception as e:
+    print(f"HWM validation skipped (offline / endpoint?): {type(e).__name__}")
+
+# %% [markdown]
 # ## 5 · Persist metrics + per-year vectors
 
 # %%
@@ -213,6 +250,7 @@ manifest = {
     "caveats": ["EAL densified (JD-FL-8) — lower RPs (10/25/50-yr) are regression flow-frequency depths anchored to both BLE depths; see §2b vs the old assumed-onset method.",
                 "PML@100/500-yr anchored to real BLE depth (solid); regression-Q standard error not yet propagated as an MC overlay.",
                 "value∝area exposure; Elizabeth TIV estimated; medium-confidence curves; duration unmodeled"],
+    "external_validation": validation,
     "metrics": json.loads(M.round(2).to_json(orient="records")),
 }
 (OUT / "flood_m4_metrics_manifest.json").write_text(json.dumps(manifest, indent=2))

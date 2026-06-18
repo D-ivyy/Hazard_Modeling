@@ -1,11 +1,13 @@
 # Plan: Flood Pipeline
 
-> **Status: flood × solar built end-to-end (M0→M4) ✅.** Two sites — **Elizabeth Solar** (LA, high-flood, real OSM
-> polygon) + **Hayhurst** (TX, dry baseline) — on **real public data + canonical curves**: M0 sites/geometry → M1
-> **FEMA BLE** depth-at-RP → M2 site-conditioned coupling → M3 **`infrasure-damage-curves`** depth-damage → M4
-> annual-maximum MC → **EAL 0.13% / PML500 4.5% TIV** (Elizabeth). Every layer known-answer-checked. **PML BLE-grounded;
-> EAL approximate** (densify w/ StreamStats+HAND — seam-ready). **Next:** harden EAL, then the **wind-farm cell (V2)**
-> off the shared catalog. Decisions: [`decisions.md`](decisions.md) (JD-FL-1…7).
+> **Status: flood × solar AND flood × wind built end-to-end (M0→M4) ✅.** **Solar** — Elizabeth Solar (LA, high) +
+> Hayhurst (TX, dry): FEMA BLE depth-at-RP → site-conditioned coupling → `infrasure-damage-curves` depth-damage →
+> annual-max MC → **EAL 0.13% / PML500 4.5% TIV**. **Wind (V2,
+> [m_wind_farm.md](m_wind_farm.md))** — **Green River IL** (~60% turbines in SFHA) + Shepherds Flat (mapped-dry):
+> per-turbine **extent-based bathtub** depth (Zone A, no BFE/BLE) → per-node coupling → **greenfield** flood×wind
+> curve → annual-max MC → **EAL 0.45% / PML500 13% TIV** (substation-concentrated). Two wind findings: **TX wind is
+> flood-immune** (0/2,976 turbines wet) and **wind flood is capped per-turbine**. Every layer known-answer-checked.
+> Decisions: [`decisions.md`](decisions.md) (JD-FL-1…8, JD-FL-W1…4). **Next:** a production folder architecture.
 
 Same approach as hail, wildfire, and wind: take **one peril** and build the whole pipeline **end-to-end in
 notebooks**, step by step, each cell legible (description → code → output → plots → tables), every basic verified
@@ -30,7 +32,7 @@ against a known answer. The notebooks will live in [`../../../Notebooks/flood/`]
 | 3. Solar coupling ✅ | M1 → M2 | **Site-conditioned** (bucket 3), thin (BLE pre-coupled depth in M1). Emits the contract M3 reads: `exposure_fraction` × `conditional_depth` per RP; height-conditioning deferred to M3. No Minkowski. | `solar/m2_coupling/01_coupling` ✅ | **built** ([m2 plan](m2_coupling.md)) |
 | 4. Solar damage ✅ | M2 → M3 | **Depth-damage** = canonical **`infrasure-damage-curves` RIVERINE_FLOOD × solar** (the library all perils use), capex-weighted + anchored; `x0` encodes the height inversion (inverter drowns @ 0.75 ft, panels survive). `conditional_loss = exposure × Asset_DR × TIV`. Elizabeth 4.4% TIV @ 500-yr. | `solar/m3_damage/01_damage` ✅ | **built** ([m3 plan](m3_damage.md)) |
 | 5. Solar loss & metrics ✅ | M3 → M4 | **Annual-maximum MC** sampling the BLE loss-exceedance curve (JD-FL-7) → EAL / VaR / PML / TVaR, **% of TIV**. Frame check ✓ (PML reproduces BLE anchors). **Elizabeth: EAL 0.13% / PML500 4.5% TIV.** Onset = real BLE 10-yr exposure × assumed depth (sensitivity-tested); EAL approximate (densify w/ StreamStats+HAND). | `solar/m4_loss_metrics/01_loss_metrics` ✅ | **built** ([m4 plan](m4_loss_metrics.md)) |
-| 6. Wind cell (V2) | M2–M4 | **Deferred until V1 solar is built & reviewed.** `wind/` on the shared M0/M1 — per-turbine point-cloud pad-elevation vs flood surface. Coordinate turbine-exposure geometry with the owner first. | `wind/…` | not started (V2) |
+| 6. Wind cell (V2) ✅ | M0–M4 | **Built end-to-end.** High **Green River IL** (~60% turbines in SFHA) + baseline **Shepherds Flat** (mapped-dry). Two findings: **TX wind is flood-immune** (0/2,976 turbines wet → high site pivots to Midwest river-valley wind) and **wind flood is capped per-turbine but substation-concentrated**. Depth = extent-based bathtub off 3DEP (Zone A, no BFE/BLE); M3 = **greenfield** flood×wind curve. **Green River EAL 0.45% / PML500 13% TIV.** | `wind_farm/…` ([plan](m_wind_farm.md)) | **built** (JD-FL-W1…4) |
 
 ## Settled framing (seeded by the A-series — see [`decisions.md`](decisions.md) + [`01_references.md`](01_references.md))
 
