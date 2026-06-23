@@ -5,9 +5,10 @@
 ## The goal
 
 Take a **new peril — flood — and build the whole end-to-end workflow in notebooks**, step by step, exactly as hail,
-wildfire, and wind were built. **V1 builds the solar cell first** — flood × solar, M0→M4 — and only **after it is
-built and reviewed end-to-end** do we add the **wind-farm** cell off the same shared flood catalog (solar-first, then
-wind, mirroring how wildfire was built). Flood is the **first peril owned outside the hail/wildfire/wind line**, so
+wildfire, and wind were built. **Both the solar AND the wind-farm cells are now built end-to-end** (flood × solar and
+flood × wind, M0→M4), off the same shared flood M0/M1, and **all three sub-perils — riverine, pluvial, and coastal —
+are built** (solar-first, then wind, mirroring how wildfire was built). Flood is the **first peril owned outside the
+hail/wildfire/wind line**, so
 it proves the M0→M4 interface generalizes to a peril nobody on the team has staked. Each step legible, every basic
 verified, the **shared loss engine untouched**.
 
@@ -24,16 +25,17 @@ pre-defines flood's taxonomy, catalog method, coupling, and damage form. So floo
 peril (like wildfire from FSim), *not* an authored one (like wind): we adopt the A-series spine and concentrate the
 build on plumbing it into our pipeline ([`01_references.md`](01_references.md)).
 
-## What V1 is — and is NOT (the honest label — to be settled in JD-FL-1)
+## What flood is — and is NOT (the honest label — settled in JD-FL-1)
 
 > **Flood is a sub-peril family** (A12): **Riverine `[R]`** (river-network-anchored), **Pluvial `[F]`** (grid-anchored
-> local rainfall), **Coastal `[C]`** (coastline surge). **Flood V1 models *exogenous inland riverine + pluvial
-> inundation* causing *physical equipment damage* to a utility-scale solar farm** — the asset as a **receptor** of an
-> inundation depth that reaches its equipment. **Coastal `[C]` is deferred and cross-linked to hurricane** via a
-> shared `event_family_id` (A12 §3 / A20 §6.8) — surge frequency follows tropical-cyclone tracks, so it rides the
-> deferred hurricane field rather than being excluded. **Also out of scope:** foundation scour / erosion, long-term
+> local rainfall), **Coastal `[C]`** (coastline surge). **Flood models *exogenous riverine + pluvial + coastal
+> inundation* causing *physical equipment damage* to utility-scale solar and wind-farm assets** — the asset as a
+> **receptor** of an inundation depth that reaches its equipment. **Coastal `[C]` is built** (× solar: Discovery Solar
+> Center + LA3 West Baton Rouge; × wind: Amazon Wind Farm US East) as a compound-Poisson surge×wind model, **joined to
+> the hurricane peril** via a shared `event_family_id` (A12 §3 / A20 §6.8, JD-FL-12) so one TC-driven event is counted
+> once rather than separately in both pipelines. **Also out of scope:** foundation scour / erosion, long-term
 > corrosion, water-quality effects, and **business-interruption loss** (the BI bucket — physical loss only, the A25
-> acute × damage cell; matches the team's hazard-tier scope). **V1 does not claim to cover total flood risk.**
+> acute × damage cell; matches the team's hazard-tier scope). **Flood does not claim to cover total flood risk.**
 
 This honesty is *basics-spot-on* applied to scope: a correct tail on a mislabeled or over-claimed peril is still a
 credibility failure — the exact thing the rebuild exists to escape. (Mirrors wildfire's DD-W1 and wind's DD-WN-1.)
@@ -47,14 +49,15 @@ at shallow depth while elevated panels survive it. No hail-style Minkowski areal
 depth field met against equipment height. Unlike wildfire, **micro-topography is load-bearing** — flood depth varies
 sharply with a metre of elevation, so the asset's height relative to the flood surface *is* the coupling.
 
-## Deferred to V2 (after V1 solar is built and reviewed) — wind farm
+## The second asset (built) — wind farm
 
-Once flood × solar runs M0→M4 and is reviewed, add the **wind-farm** cell off the **same shared flood M0/M1**. A wind
+The **wind-farm** cell is built off the **same shared flood M0/M1** ([m_wind_farm.md](m_wind_farm.md)). A wind
 farm is a **sparse turbine point-cloud**, so flood is still site-conditioned but sampled **per-turbine pad elevation
-vs the flood surface** (only low-lying turbines flood; foundation / base-electrical exposure). That point-cloud
-geometry is what the owner is actively designing in the `wind/` and `hail-wind-farm` plans — so when V2 opens,
-**coordinate the turbine-exposure approach with the owner first**, to reuse rather than diverge. **Not built until V1
-solar is checked.**
+vs the flood surface** (only low-lying turbines flood; foundation / base-electrical exposure — plus the farm's own
+in-hull collector substation, which carries most of the loss when it sits in the river valley). The turbine-exposure
+approach reuses the convective-wind wind-farm asset template (USWTDB cloud + capex curve) rather than diverging from
+it. Built end-to-end across riverine, pluvial, and coastal (Green River IL · Shepherds Flat OR · Amazon Wind Farm US
+East NC).
 
 ## Domain principles for this pipeline
 
@@ -64,34 +67,38 @@ solar is checked.**
   two thresholds kept distinct — the **flood event / return-period basis** (what the catalog counts) vs the **damage-
   onset depth** (where the depth-damage curve leaves zero — e.g. inverter-pad height); depth-frequency anchored in the
   standard flood-frequency literature, not assumed.
-- **Modular from day one** — M0 / M1 are the shared peril catalog (built to serve the later wind cell too); M2→M4
-  specialize to solar in V1. The wind fork is **only at M2** when V2 opens; M3 / M4 reuse the shared machinery.
+- **Modular from day one** — M0 / M1 are the shared peril catalog (M0 = solar + wind sites; M1 = one notebook per
+  sub-peril over both assets, emitting the asset-independent field). M1 emits the field; **M2 does the coupling** (the
+  field→asset reduction — areal mean for solar, per-node for wind, JD-FL-19); M3 / M4 reuse the shared machinery.
 
 ## What success looks like (V1)
 
 A reviewable, step-by-step notebook series that takes raw public flood data to a coherent *sampled* annual loss
 distribution for a **solar farm** (EAL / VaR / PML / TVaR, **% of TIV**), honestly labeled as inland-riverine-and-
 pluvial-only, built on site-conditioned coupling the platform already owns, every step legible, every basic verified —
-and a shared M0/M1 catalog ready for the deferred wind-farm cell.
+and a shared M0/M1 catalog that also feeds the built wind-farm cell.
 
-## Open questions (to resolve as we plan)
+## Open questions (now resolved — kept for the reasoning trail)
 
-*The A-series pre-settles much of the spine — these are seeded as proposed decisions in [`decisions.md`](decisions.md);
-the starred one is the genuinely-open call.*
+*The A-series pre-settled much of the spine; the seeds below are now **all logged decisions** in
+[`decisions.md`](decisions.md) (JD-FL-1…19, JD-FL-W1…W7). The ★ event-model bridge — once the genuinely-open call —
+is settled as JD-FL-7.*
 
-- **★ Event-model bridge — RP grids → the shared compound-Poisson MC (THE load-bearing decision).** The flood
-  reference world (HAZUS / First Street) computes loss at each return period then integrates the **exceedance curve →
-  AAL**; our shared M4 is a **compound-Poisson MC** sampling events/year. Convert the RP depth grids into an event
-  stream the MC can sample (the wildfire precedent — FSim pre-integrated → λ → same MC), or run an RP+AAL track and
-  reconcile metrics. Settle before M4. ([JD-FL-?](decisions.md))
-- **M1 frequency path** — *proposed decided:* **pre-integrated return-period depth grids** (A20 §3.3), USGS / Log-
-  Pearson III as the validation cross-check ([learning_logs/09](../../learning_logs/09_pre_integrated_vs_extracted_catalog.md)). Confirm the actual public product (Fathom-US 2.0 vs FEMA Risk MAP vs licensed First Street) in M0. ([JD-FL-2](decisions.md))
-- **Flood-type scope** — *proposed decided:* riverine + pluvial in V1, **coastal `[C]` deferred + hurricane-cross-linked**
-  (A12). Decide riverine-only vs riverine+pluvial for the *first* M0 notebook (pluvial may lag). ([JD-FL-1](decisions.md))
-- **Depth-damage curve source** — *proposed:* tabular **USACE building-archetype + per-asset DEM elevation offset**
-  (A22 §2.4/§7.6); subsystem split (base electrical drowns shallow; elevated panels survive); **solar-specific curve
-  deferred** (A22 Q7 — none exists publicly). ([JD-FL-?](decisions.md))
-- **Two solar sites (low-vs-high flood contrast), mirroring hail's Hayhurst/Matrix.** A high-flood-exposure solar site
-  (floodplain-adjacent) + a low baseline — possibly **reuse Hayhurst (TX desert)** as the low control for cross-peril
-  coherence (the owner's stated preference). ([AFL-?](assumptions.md))
+- **★ Event-model bridge — RP grids → the shared MC (SETTLED, [JD-FL-7](decisions.md)).** The flood reference world
+  (HAZUS / First Street) computes loss at each return period then integrates the **exceedance curve → AAL**; our shared
+  M4 is a Monte-Carlo engine. **Settled as an annual-maximum MC** sampling the loss-exceedance curve (inland riverine +
+  pluvial, worse-source-wins) plus a compound-Poisson surge×wind track for coastal — both reconciled into the shared
+  metric frame. ([JD-FL-7](decisions.md))
+- **M1 frequency path** — *settled, [JD-FL-6](decisions.md) (supersedes JD-FL-2):* the depth spine is **FEMA BLE
+  riverine depth grids** + SFHA-bathtub for Zone-A wind sites + NLDI→NSS / gauge `Q(T)` for the lower RPs, validated
+  against Log-Pearson III ([learning_logs/09](../../learning_logs/09_pre_integrated_vs_extracted_catalog.md)).
+  **Fathom-US 2.0 is only a future commercial swap-in — never the V1 spine.** ([JD-FL-6](decisions.md))
+- **Flood-type scope** — *settled, [JD-FL-1](decisions.md):* riverine + pluvial + **coastal — all three built**;
+  coastal joined to hurricane on `event_family_id` ([JD-FL-12](decisions.md)).
+- **Depth-damage curve source** — *settled (AFL-8):* the **canonical `infrasure-damage-curves` RIVERINE_FLOOD × solar**
+  curve exists and is used (source-agnostic over all sub-perils); the old "tabular USACE building-archetype / no solar
+  flood curve / solar-specific deferred" plan (A22 Q7) is **superseded**.
+- **Sites** — *settled.* Solar = **Hayhurst** (dry), **Elizabeth** (riverine), **Discovery** (coastal), **LA3**
+  (all-three); wind = **Green River IL** (riverine), **Shepherds Flat OR** (dry), **Amazon Wind Farm US East NC**
+  (all-three). ([AFL-*](assumptions.md))
 - **TIV basis** — estimate solar TIV from $/kW (no registry TIV yet); report % of TIV alongside dollars.

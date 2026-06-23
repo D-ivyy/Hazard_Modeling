@@ -1,13 +1,20 @@
 # M0 — Input data (the plan)
 
-*Phase 1 of the flood × solar build. The deliverable is **understanding**, not a model: meet the raw flood
-evidence at the two sites, field-dictionary every layer, and lock the high site — before any M1 math.* Per the
+*Phase 1 of the flood build. The deliverable is **understanding**, not a model: meet the raw flood
+evidence at every site, field-dictionary every layer, and lock the high sites — before any M1 math.* Per the
 per-phase loop ([feature_workflow](../../workflows/feature_workflow.md)): Questions → Research → Detailed Plan →
 Execute → Feedback → Document.
 
+> **⚠️ Built state vs original plan.** M0 is **built** as two notebooks — `01_solar_sites` (Hayhurst dry · Elizabeth
+> riverine · Discovery coastal · LA3 all-three) and `02_wind_sites` (Green River IL · Shepherds Flat OR · Amazon Wind
+> Farm US East NC). The **depth-grid spine is FEMA BLE** (+ SFHA-bathtub for Zone-A wind sites + NLDI→NSS / gauge
+> `Q(T)`), settled in **[JD-FL-6](decisions.md)** — which **supersedes [JD-FL-2](decisions.md)'s Fathom plan** (Fathom
+> is now only a future commercial swap-in). The "Questions / Detailed plan" sections below record the **original**
+> Fathom-spine / two-solar-site planning; lines stated as current fact are corrected or marked superseded.
+
 > **Two sides reminder.** M0 is *Side 1* — meet the data. The model (M1→M4) is *Side 2*. Notebooks land in
-> [`../../../Notebooks/flood/m0_input_data/`](../../../Notebooks/flood). Sites + frequency path are decided
-> ([JD-FL-2](decisions.md), [JD-FL-3](decisions.md)); M0 *confirms the data exists and is sane* at both sites.
+> [`../../../Notebooks/flood/m0_input_data/`](../../../Notebooks/flood). Sites + frequency path are settled
+> ([JD-FL-6](decisions.md), [JD-FL-3](decisions.md)); M0 *confirms the data exists and is sane* at every site.
 
 ---
 
@@ -33,7 +40,8 @@ Execute → Feedback → Document.
 
 | Source | What it is | Role | Access |
 |--------|-----------|------|--------|
-| **Fathom-US 2.0** | CONUS fluvial+pluvial **RP depth grids** (~30 m, multiple return periods) | **M1 spine** ([JD-FL-2](decisions.md)) | commercial — **dependency** (confirm availability; public substitute possible) |
+| **FEMA BLE** *(the built M1 spine)* | riverine RP depth grids (100/500-yr + 10% extent) — local-HEC-RAS quality, free, NAVD88 | **M1 spine** ([JD-FL-6](decisions.md), supersedes JD-FL-2) | public REST (USGS EBFE service) |
+| **Fathom-US 2.0** | CONUS fluvial+pluvial **RP depth grids** (~30 m, multiple return periods) | **future commercial swap-in only** — *not* the V1 spine | commercial — optional |
 | **FEMA NFHL** | Flood **zones** (SFHA 1% / 0.2%) — national | sanity overlay / scope check | public REST/WMS |
 | **FEMA Risk MAP / FRD depth grids** | Depth rasters where Risk MAP studies exist | cross-check vs Fathom where available | public (patchy) |
 | **USGS 3DEP** | Bare-earth **DEM** (10 m / 1 m) | **M2 elevation offset** `depth − ground_elev` | public |
@@ -53,8 +61,9 @@ Execute → Feedback → Document.
 4. **Known-answer check:** Hayhurst screens ~zero flood; the high site screens materially higher (the low-vs-high
    contrast, like wildfire's ~107× BP).
 
-**`01_solar_sites`** — *meet the flood hazard at both sites.*
-1. Fetch the **RP depth grids** (Fathom/FEMA) clipped to each site; tabulate available **return periods**,
+**`02` (built as `02_wind_sites`)** — *meet the flood hazard.* (Originally planned as a second solar-only "meet the
+hazard" notebook; **built** as the wind-site screen + geometry notebook, which also carries the hazard-probe steps.)
+1. Fetch the **RP depth grids** (FEMA BLE) clipped to each site; tabulate available **return periods**,
    resolution, **datum/units**, CRS.
 2. Fetch the **3DEP DEM** at each site; record vertical datum + resolution.
 3. **Field-dictionary** every layer (value · meaning · datum · units · reference base).
@@ -77,10 +86,10 @@ Execute → Feedback → Document.
 ## Dependencies (external data)
 
 Two inputs aren't in-repo: (1) the **national** `powerplants_enriched_v2` registry (the in-repo
-`site_registry.csv` is the 66-site AIG portfolio — no MS/LA), and (2) **Fathom-US 2.0** access (or a confirmed
-public depth-grid substitute). **Both have public substitutes** used in `01`/`02` — EIA-860 for the screen, FEMA
-NFHL + 3DEP DEM for context — so they gate *refinement*, not the prototype. Swap in the enriched registry / a
-depth product (Fathom, FEMA Risk MAP, JRC global, or USGS extraction) when sourced.
+`site_registry.csv` is the 66-site AIG portfolio — no MS/LA), and (2) a commercial depth-grid product (Fathom-US 2.0).
+**The depth dependency is now resolved with public data:** the built spine is **FEMA BLE** (+ SFHA-bathtub + NLDI→NSS /
+gauge `Q(T)`, JD-FL-6), with EIA-860 for the screen and 3DEP DEM for context. So no commercial feed is required. Fathom
+/ First Street remain an **optional future swap-in**, not a gate.
 
 ## On greenlight
 

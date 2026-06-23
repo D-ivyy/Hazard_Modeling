@@ -17,10 +17,10 @@ adapted to us." Each entry: **what it is · what we take · what we adapt or rej
 
 | Source | What it is | What we take / adapt |
 |--------|-----------|----------------------|
-| **A12 — peril taxonomy spine** (§2, §6.1) | Flood = **three distinct sub-peril rows**: Riverine `[R]`, Pluvial `[F]`, Coastal `[C]`; the dual-test split (distinct footprint + distinct data); coastal **cross-linked to hurricane** via `event_family_id` | **Take:** flood-as-sub-peril-family framing; **R + F in V1, C deferred** (cross-linked, not excluded). Sets [JD-FL-1](decisions.md). |
-| **A20 — M0↔M1 hazard catalog** (§2.5, §3.3, §6.8, §7) | Flood frequency = **hydrodynamic-reanalysis backbone → pre-integrated return-period depth rasters** (10/50/100/200/500-yr); USACE historical for validation | **Take:** pre-integrated depth grids as the M1 spine (the FSim/ASCE analogue, [learning_logs/09](../../learning_logs/09_pre_integrated_vs_extracted_catalog.md)). Sets [JD-FL-2](decisions.md). **Reason about:** the RP-grid → our compound-Poisson MC bridge (the open event-model decision). |
+| **A12 — peril taxonomy spine** (§2, §6.1) | Flood = **three distinct sub-peril rows**: Riverine `[R]`, Pluvial `[F]`, Coastal `[C]`; the dual-test split (distinct footprint + distinct data); coastal **cross-linked to hurricane** via `event_family_id` | **Take:** flood-as-sub-peril-family framing; **R + F + C all built** (C joined to hurricane on `event_family_id`, JD-FL-12 — not excluded). Sets [JD-FL-1](decisions.md). |
+| **A20 — M0↔M1 hazard catalog** (§2.5, §3.3, §6.8, §7) | Flood frequency = **hydrodynamic-reanalysis backbone → pre-integrated return-period depth rasters** (10/50/100/200/500-yr); USACE historical for validation | **Take:** pre-integrated depth grids as the M1 spine (the FSim/ASCE analogue, [learning_logs/09](../../learning_logs/09_pre_integrated_vs_extracted_catalog.md)). Sets [JD-FL-2](decisions.md) — **now superseded by [JD-FL-6](decisions.md)**: the V1 spine is **FEMA BLE** (+ SFHA-bathtub + NLDI→NSS/gauge `Q(T)`), with Fathom only a future commercial swap-in. **Resolved:** the RP-grid → shared-MC bridge is settled as the annual-max MC ([JD-FL-7](decisions.md)). |
 | **A21 — M1↔M2 coupling types** (§2.3) | Flood = **site-conditioned**; the elevation-offset formula `depth_at_asset = water_surface_elevation − ground_elevation(asset_DEM)`; per-sub-cluster susceptibility (some inverter pads above, some below the floodplain) | **Take:** site-conditioned coupling + the DEM-offset formula verbatim as the M2 contract. Confirms [AFL-3/AFL-4](assumptions.md). |
-| **A22 — M2↔M3 damage representation** (§2.4, §3.7, §7.6) | Depth-damage = **tabular USACE curves** (depth → MDR lookup); renewable-specific curves **do not exist yet** (Q7 open) | **Take:** USACE building-archetype curve + per-asset elevation offset for V1; **adapt:** subsystem split (base electrical drowns shallow; elevated panels survive). Solar-specific curve deferred. |
+| **A22 — M2↔M3 damage representation** (§2.4, §3.7, §7.6) | Depth-damage = **tabular USACE curves** (depth → MDR lookup); renewable-specific curves **do not exist yet** (Q7 open) | **Superseded:** A22 Q7 ("no solar flood curve") no longer holds — the canonical **`infrasure-damage-curves` RIVERINE_FLOOD × solar** curve exists and is **adopted** (source-agnostic over all sub-perils, AFL-8), keeping only the subsystem-split idea (base electrical drowns shallow; elevated panels survive). The USACE-from-scratch route is dropped. |
 | **A24 — distribution choices** · **A25 — damage vs disruption scope** | Count/severity distribution axioms; flood = **acute × damage** cell only for V1 (no chronic / slow-onset) | **Take:** physical-damage-only fence (matches the team's no-BI scope); the distribution discipline feeds M4. |
 
 ## Bucket B — Input-data fetching — `old-hazard-model/` (data wrangling, **anti-pattern for loss math**)
@@ -60,5 +60,7 @@ adapted to us." Each entry: **what it is · what we take · what we adapt or rej
 
 ---
 
-*Open: confirm public-data path for the depth grids (Fathom-US 2.0 access vs FEMA Risk MAP depth grids vs licensed
-First Street), and settle the RP-grid → compound-Poisson-MC event-model bridge before M4.*
+*Resolved: the public-data depth path is settled as **FEMA BLE** (+ SFHA-bathtub for Zone-A wind sites + NLDI→NSS /
+gauge `Q(T)` for the lower RPs, [JD-FL-6](decisions.md)); the RP-curve → shared-MC event-model bridge is settled as the
+annual-max MC ([JD-FL-7](decisions.md)). First Street / Fathom-US 2.0 are retained only as a **future commercial
+swap-in**, never the V1 spine.*

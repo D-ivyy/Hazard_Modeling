@@ -4,15 +4,16 @@
 needs one for the **opposite** reason: its events **are** inherited (each sub-peril has its own data product), but
 **"flood" is not one peril** — it is **three sub-perils at once** (riverine · pluvial · coastal), each with a
 **different magnitude metric** and a **different data source**, sharing only **one damage driver: inundation depth**.
-The flood notebooks build that family end-to-end (M0→M4, riverine + pluvial); what they lack is a single,
+The flood notebooks build that family end-to-end (M0→M4, riverine + pluvial + coastal); what they lack is a single,
 up-front statement of **(a) the magnitude observable per sub-peril** and **(b) the exact data source per sub-peril**.
 This doc — and its notebook — is that statement. It **orients** the family quantitatively; it does **not** author or
 re-model anything. Written for a reader new to the domain — terms defined on first use.*
 
 **Where this sits:** **layer-0 (hazard definition / orientation)** → [M0 (input data)](m0_input_data.md) →
 [M1 (catalog)](m1_catalog.md) → [M2 (coupling)](m2_coupling.md) → [M3 (damage)](m3_damage.md) →
-[M4 (loss & metrics)](m4_loss_metrics.md). Built for the **solar** cell (Elizabeth LA / Hayhurst TX) and the **wind**
-cell (Green River IL / Shepherds Flat OR — [m_wind_farm.md](m_wind_farm.md)). **Source material:**
+[M4 (loss & metrics)](m4_loss_metrics.md). Built for the **solar** cell (Hayhurst TX dry · Elizabeth LA riverine ·
+Discovery FL coastal · LA3 West Baton Rouge all-three) and the **wind** cell (Green River IL riverine · Shepherds Flat
+OR dry · Amazon Wind Farm US East NC all-three — [m_wind_farm.md](m_wind_farm.md)). **Source material:**
 `jdocs/Hazard_Data_Reference-Flood.md` (internal). **Notebook:**
 [`Notebooks/flood/layer0/01_hazard_definition`](../../../Notebooks/flood/layer0/01_hazard_definition.ipynb).
 
@@ -57,7 +58,7 @@ at each asset and apply a depth-damage curve"*). But the **magnitude we observe*
 |---|---|---|---|
 | **[R] Riverine** | flood **depth** above ground at a return period (ft → m) | **FEMA BLE depth grids** (100/500-yr) — local-HEC-RAS quality, free, NAVD88 — *measured depth*; **USGS NLDI→NSS** regional-regression flow-frequency `Q(T)` for the **lower RPs** (10/25/50-yr, JD-FL-8); **3DEP DEM** for ground elevation | JD-FL-6/8 · AFL-6/12 |
 | **[F] Pluvial / flash** | 24-hr rainfall **depth** at RP → **modeled** ponding depth | **NOAA Atlas 14** precipitation-frequency → **SCS Curve-Number** runoff → **3DEP DEM / 1 m lidar** ponding. **No free pluvial *depth* product exists** — the "blind spot" | JD-FL-9 · AFL-P1/P2 |
-| **[C] Coastal / surge** *(deferred)* | surge **depth** (stillwater + wave) at RP | **NOAA SLOSH** surge — **shared from the hurricane peril**, not rebuilt | JD-FL-1 · [REF] §5 |
+| **[C] Coastal / surge** *(built)* | surge **depth** (stillwater + wave) at RP | **NOAA SLOSH** surge — **shared from the hurricane peril**, not rebuilt | JD-FL-1/12 · [REF] §5 |
 
 **Screening / support sources** (which asset, where, how high — not the depth itself): **FEMA NFHL** regulatory flood
 zones (1% / 0.2% annual-chance) for site screening (*is the asset in the SFHA?*); **EIA-860** national plant registry
@@ -72,13 +73,13 @@ zones (1% / 0.2% annual-chance) for site screening (*is the asset in the SFHA?*)
   1% floodplain vs FEMA ~13 M), and **no free pluvial *depth* product exists**. So we have easy *frequency* (Atlas 14
   rainfall) but must **model** depth with **nothing observed to calibrate against** — the inherent weakness, flagged
   in AFL-P1/P2, not hidden.
-- **`[C]` Coastal depth is obtainable** (SLOSH) but is the **same physical water as hurricane surge** — one source,
-  counted once.
+- **`[C]` Coastal is built** off SLOSH surge depth (Discovery / LA3 solar + Amazon wind) but is the **same physical
+  water as hurricane surge** — one source, **joined to hurricane on `event_family_id` (JD-FL-12)** and counted once.
 - **Datum discipline** (`[REF]` §7, AFL-13): riverine BFEs (NAVD88), coastal levels (tidal datums), and asset
   elevations must reconcile to one datum (NOAA VDatum) or *every* depth is meaningless.
 
 > **One driver, three sources.** Riverine **measures** depth (BLE); pluvial **models** it from rainfall (Atlas 14 →
-> SCS-CN); coastal **borrows** it (SLOSH, deferred). Naming the source per sub-peril is this layer's reason to exist.
+> SCS-CN); coastal **borrows** it (SLOSH, shared from hurricane). Naming the source per sub-peril is this layer's reason to exist.
 
 ### 2. The event / catalog basis — what counts as a flood event
 
@@ -140,7 +141,7 @@ assumptions, vintage, datum, and resolution; the uncertainty moved upstream, it 
 **The sub-peril split is sharpest here:** riverine **reads** a real pre-integrated surface; **pluvial has none to read**
 (`[REF]` §7 — no free pluvial depth grid) and must **model** depth from Atlas 14 rainfall frequency via SCS-CN
 (JD-FL-9). Frequency is pre-integrated for pluvial (Atlas 14); **depth is not**. Coastal's SLOSH surge grids are
-pre-integrated too, shared from hurricane (deferred).
+pre-integrated too, shared from hurricane (built, JD-FL-12).
 
 ---
 
@@ -194,7 +195,7 @@ a metre of elevation changes the depth, so the asset's height relative to the fl
 ```
    [R] RIVERINE   broad swath (BLE pre-integrated)  →  BUCKET 3 (site-conditioned)   [built: reuse wildfire]
    [F] PLUVIAL    local rainfall ponding            →  BUCKET 3 (site-conditioned)   [built]
-   [C] COASTAL    coastline surge (deferred)        →  BUCKET 3 (site-conditioned)   [deferred → hurricane]
+   [C] COASTAL    coastline surge (SLOSH)           →  BUCKET 3 (site-conditioned)   [built → joined to hurricane]
 ```
 
 The asset-geometry difference is **within** the bucket, not across buckets:
@@ -209,8 +210,9 @@ The asset-geometry difference is **within** the bucket, not across buckets:
 > secondary perils of the deferred hurricane**: a tropical cyclone drives surge **and** rainfall **and** river rise at
 > once (compound flooding). The reserved **`event_family_id`** (JD-FL-4) is the hook that, when hurricane lands, binds
 > a TC-driven surge/rain event to its parent storm so **one event is counted once** — not separately in the flood and
-> hurricane pipelines (`[REF]` §7: *"use one surge source across both perils and avoid double-counting"*). This is
-> precisely why coastal is **deferred to hurricane**, not built standalone now.
+> hurricane pipelines (`[REF]` §7: *"use one surge source across both perils and avoid double-counting"*). This hook is
+> now **realized**: coastal is **built** (compound-Poisson surge×wind per-subsystem on `event_family_id`, JD-FL-12) and
+> **joined to hurricane** on that key rather than built standalone in isolation.
 
 ---
 
@@ -227,20 +229,21 @@ This layer fixes the **definition**; the (already-built) downstream layers consu
    NOAA Atlas 14    precipitation-frequency (24-hr depth by RP) — the pluvial frequency backbone
    3DEP DEM / lidar ground elevation — converts water-surface elevation to depth above the asset
    EIA-860 / HIFLD  asset + substation registry — which sites; where the low node is
-   SLOSH            coastal surge — shared from hurricane (deferred)
+   SLOSH            coastal surge — shared from hurricane (built; joined on event_family_id)
 ```
 
 Honest M0 flags this layer mandates: **no free pluvial *depth* product exists** (the blind spot — model it from Atlas
 14); **BLE gives only the 1% + 0.2% tail points** (lower RPs densified, JD-FL-8); **datum** must reconcile to NAVD88
 (VDatum, AFL-13); **climate non-stationarity** (Atlas 14 aging; Atlas 15 ~Sept 2026) carried as an overlay.
 
-**→ M1 (catalog)** ([m1_catalog.md](m1_catalog.md)) — **fork the catalog per sub-peril** (JD-FL-10): **riverine** =
-read the BLE RP surface (profile-assembly) + regression densification; **pluvial** = Atlas 14 → SCS-CN → ponding depth.
-Each emits the **same depth-at-RP schema** tagged `sub_peril`, with a reserved `event_family_id` (JD-FL-4). The
-**RP basis** stays with M1 (it sets the annual-max loss); the **damage-onset depth** travels to M3.
+**→ M1 (catalog)** ([m1_catalog.md](m1_catalog.md)) — **one notebook per sub-peril over both assets** (JD-FL-10/19):
+**riverine** = read the BLE RP surface (profile-assembly) + regression densification; **pluvial** = Atlas 14 → SCS-CN
+→ runoff; **coastal** = SLOSH surge. Each emits the **asset-independent field** tagged `sub_peril`, with a reserved
+`event_family_id` (JD-FL-4); the field→asset reduction is **not** done here. The **RP basis** stays with M1 (it sets
+the annual-max loss); the **damage-onset depth** travels to M3.
 
-**→ M2 (coupling)** ([m2_coupling.md](m2_coupling.md)) — **site-conditioned** (bucket 3), reusing wildfire's thin M2:
-areal inundated fraction (solar) or per-node depth (wind), DEM-modulated.
+**→ M2 (coupling)** ([m2_coupling.md](m2_coupling.md)) — **site-conditioned** (bucket 3); M2 **does the coupling**
+(JD-FL-19) — it samples the M1 field at the asset: areal inundated mean (solar) or per-node depth (wind), DEM-modulated.
 
 **→ M3 (damage)** ([m3_damage.md](m3_damage.md)) — the **anchored** `infrasure-damage-curves` depth-damage curve
 (`DR ≈ 0` below the component pad/`x0`, rising with depth, capping at submersion).
@@ -253,13 +256,14 @@ every metric off the **sampled** distribution, **% of TIV alongside dollars**, n
 
 ## Decisions & assumptions surfaced (this layer)
 
-- **Decisions** ([decisions.md](decisions.md)): flood = a **sub-peril family** (R/F/C, dual-test split), V1 = R + F,
-  coastal deferred + hurricane-cross-linked (JD-FL-1) · depth source per sub-peril — BLE-preferred riverine
+- **Decisions** ([decisions.md](decisions.md)): flood = a **sub-peril family** (R/F/C, dual-test split), **all three
+  built**, coastal joined to hurricane on `event_family_id` (JD-FL-1/12) · depth source per sub-peril — BLE-preferred riverine
   (JD-FL-6) + lower-RP densification (JD-FL-8) + Atlas 14 → SCS-CN pluvial (JD-FL-9) · the catalog forked at M1 with a
   reserved `event_family_id` (JD-FL-4/10) · annual-maximum event model (JD-FL-7) · sub-peril combine = co-sample +
   worse-source-wins headline + additive envelope, **flood maxes (wind adds)** (JD-FL-11) · site-conditioned coupling
   for all sub-perils · pre-integrated BLE surface as the riverine tail (profile-assembly) · the two-threshold
-  (RP basis vs damage-onset depth) split. Logged **JD-FL-1…11** (+ the wind-cell **JD-FL-W1…6**).
+  (RP basis vs damage-onset depth) split; coastal compound-Poisson surge×wind joined to hurricane (JD-FL-12); the
+  shared-M0/M1 + M2-coupling structure (JD-FL-19). Logged **JD-FL-1…19** (+ the wind-cell **JD-FL-W1…W7**).
 - **Assumptions** ([assumptions.md](assumptions.md)): depth product = FEMA BLE (AFL-6), lower RPs densified (AFL-12),
   datum via VDatum + climate/levee overlays (AFL-13) · pluvial = Atlas 14 → SCS-CN, **no depth anchor — the blind
   spot** (AFL-P1/P2) · coupling = `depth = WSE − ground(DEM)`, site-conditioned, micro-elevation load-bearing

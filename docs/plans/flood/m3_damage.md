@@ -40,5 +40,7 @@ The library bakes **component elevation into `x0`** — so **no separate mount-h
 result: Elizabeth conditional loss **2.6% (100-yr) → 4.4% (500-yr) of TIV**; Hayhurst 0.1–0.6%.
 
 ## Next
-**M4 (loss & metrics)** — feed the depth-at-RP conditional losses through the **shared compound-Poisson MC** →
-EAL / VaR / PML / TVaR (% of TIV). **First settle the open event-model bridge** (2-point RP curve → MC).
+**M4 (loss & metrics)** — feed the depth-at-RP conditional losses through the **shared MC** →
+EAL / VaR / PML / TVaR (% of TIV). Event-model bridge **settled** (JD-FL-7): inland (riverine + pluvial) =
+**annual-max MC** off a **5-point densified** RP curve (JD-FL-8, not 2-point); coastal = **compound-Poisson
+surge×wind** (JD-FL-12); total = inland + coastal.

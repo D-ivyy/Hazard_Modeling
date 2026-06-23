@@ -1,12 +1,14 @@
-# Plan: Flood × Wind-farm cell (V2)
+# Plan: Flood × Wind-farm cell (built)
 
-*The second asset for the flood peril. Mirror the flood × solar build (M0→M4) but on the **wind-farm** asset — a
+*The second asset for the flood peril — **built end-to-end (M0→M4)**, originally sequenced after the solar cell.
+Mirrors the flood × solar build (M0→M4) but on the **wind-farm** asset — a
 **sparse turbine point-cloud over a huge lease**, not a dense areal footprint. Reuses the flood engine (JD-FL-7
 annual-max MC) and the convective_wind wind-farm asset template (USWTDB cloud + capex curve), with a genuinely new
 M2 (per-node coupling) and M3 (greenfield flood × wind curve).*
 
-> **Status: built end-to-end (M0→M4), gauge-grounded + externally validated, riverine + pluvial (parity with
-> flood × solar); substation ownership resolved (JD-FL-W7).** High site **Green River, IL** (Lee Co., 74 turbines,
+> **Status: built end-to-end (M0→M4), gauge-grounded + externally validated, riverine + pluvial + coastal (parity with
+> flood × solar — coastal × wind = **Amazon Wind Farm US East NC**, JD-FL-12…17); substation ownership resolved (JD-FL-W7).**
+> High site **Green River, IL** (Lee Co., 74 turbines,
 > ~194 MW, **60% of turbines in the SFHA**) + baseline **Shepherds Flat, OR** (reused, **mapped-dry**). **Green River
 > combined EAL 1.27% / PML100 10.9% / PML500 11.4% TIV** — driven by the farm's **own collector substation**, which
 > sits in the river valley and **floods** (0.88 m @ 100-yr; ~75% of EAL). **Turbines-only floor** (collector excluded)
@@ -17,7 +19,8 @@ M2 (per-node coupling) and M3 (greenfield flood × wind curve).*
 > `substation=generation` node (JD-FL-W7, **portfolio-scalable**); validated vs FEMA NRI (~13× Lee Co. avg; 0.93
 > floods/yr ≈ annual-max). **Correction:** the earlier "substation real & **dry** → EAL 0.31% / no load-bearing
 > assumption" used the **adjacent Big Sky Wind farm's** collector by mistake (nearest-to-centroid bug); the substation
-> *location method* was load-bearing and is now fixed. Decisions: (JD-FL-W1…7, + JD-FL-9/10/11).
+> *location method* was load-bearing and is now fixed. Decisions: (JD-FL-W1…W7, + JD-FL-9/10/11, the coastal decisions
+> JD-FL-12…17 (incl. coastal × wind), and the flood-structure decisions JD-FL-18/19).
 
 ## The findings that shaped the build
 
@@ -71,7 +74,7 @@ M2 (per-node coupling) and M3 (greenfield flood × wind curve).*
   So the **Rank-1 volume-pour is deferred** (parity with solar; its payoff is at pluvial-driven water-limited sites).
 - **Loss (M4):** the **same** JD-FL-7 annual-max MC + **JD-FL-11 worse-source-wins combine** as solar — the only
   difference is upstream (per-node summed L₁₀₀/L₅₀₀ + the collector). Pluvial being negligible, the combine is
-  **riverine-dominated** (the asset contrast to solar's pluvial-dominated headline), and within riverine the
+  **riverine-dominated** (raised pads shed the sheet ponding a flat solar footprint catches), and within riverine the
   **collector substation dominates** (~75% of EAL).
 
 ## Honest limits (carried) / upgrades (seam-ready)

@@ -222,5 +222,7 @@ print("wrote:", OUT / "flood_solar_m3_damage_manifest.json")
 #   100-yr → 500-yr and dominates the Hayhurst baseline.
 # - **Honest limits:** medium-confidence curves; duration unmodeled (Gen-1); `value ∝ area` exposure; Elizabeth TIV
 #   estimated. **Mitigation lever noted:** PV flood-stow (x0 7 ft) for a later resiliency pass.
-# - **Next — M4 (loss & metrics):** feed the depth-at-RP conditional losses through the shared compound-Poisson MC →
-#   EAL / VaR / PML / TVaR (% of TIV). **First settle the open event-model bridge** (2-point RP curve → MC).
+# - **Next — M4 (loss & metrics):** feed the conditional losses through the shared MC — inland (riverine + pluvial)
+#   **annual-maximum**, co-sampled worse-source-wins (JD-FL-11); coastal **compound-Poisson** surge×wind (JD-FL-12);
+#   total = inland + coastal → EAL / VaR / PML / TVaR (% of TIV). The event-model bridge is settled (JD-FL-7); the
+#   inland RP curve is now 5-point (densified, JD-FL-8).

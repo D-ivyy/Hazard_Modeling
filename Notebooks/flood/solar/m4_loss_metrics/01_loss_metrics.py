@@ -427,7 +427,7 @@ manifest = {
     "marginal_eal_pct": {f"{nm} · {sp}": round(marginal_eal[(nm, sp)], 3) for nm in sites["name"] for sp in SUBPERILS},
     "metric_frame": "per-year loss vectors; PML_T = (1-1/T) percentile (DD-4)",
     "caveats": ["RIVERINE: BLE tail + JD-FL-8 regression densification (lower RPs); PML@100/500 BLE-anchored (solid).",
-                "PLUVIAL: blind-spot — Atlas-14 rainfall + SCS-CN + sheet ponding; NO depth anchor, assumption-driven (retention r, ponding-fraction f) → screening-grade; often DOMINATES the combined loss (driven by the f exposure knob).",
+                "PLUVIAL: blind-spot — Atlas-14 rainfall + SCS-CN + sheet ponding; NO depth anchor, assumption-driven (retention r, ponding-fraction f) → screening-grade; small once ponding is lidar-grounded (JD-FL-15) — riverine dominates the inland combine.",
                 "COMBINE (JD-FL-11): comonotonic worse-wins — overstates correlation slightly, ignores compound stacking; independent-sum / additive-stacking are the sensitivity variants.",
                 "value∝area exposure; Elizabeth TIV estimated; medium-confidence curves; duration unmodeled; regression-Q + pluvial-knob uncertainty not yet propagated."],
     "external_validation": validation,

@@ -102,16 +102,17 @@ print("  EXACTLY WHERE it comes from, then show they reconverge on one damage dr
 # %% [markdown]
 # **The sub-peril family (the dual-test split).** `[A]` A12 / `[REF]` §1:
 #
-# | Tag | Sub-peril | Footprint (distinct) | Data (distinct) | V1 status |
+# | Tag | Sub-peril | Footprint (distinct) | Data (distinct) | built |
 # |---|---|---|---|---|
 # | **[R]** | **Riverine** | river/stream network — the classic floodplain (slow-onset, large, well-gauged) | FEMA BLE depth grids + USGS flow-frequency | solar + wind |
 # | **[F]** | **Pluvial / flash** | local grid — intense-rainfall surface ponding, *often outside the floodplain* (the "blind spot") | NOAA Atlas 14 rainfall-frequency → modeled depth | solar + wind |
-# | **[C]** | **Coastal / surge** | coastline — surge + tide + wave + SLR | SLOSH surge (shared with hurricane) | cross-linked to hurricane |
+# | **[C]** | **Coastal / surge** | coastline — surge + tide + wave + SLR | NOAA SLOSH MOM + RAFT (shared w/ hurricane) | built — Discovery/LA3 solar + Amazon wind (compound surge×wind) |
 #
-# > **Coastal is deferred, not excluded** (JD-FL-1). Coastal surge is the **same storm** as a hurricane's wind, so
-# > building it standalone now would **double-count** one event across two pipelines. It rides the deferred hurricane
-# > field via a reserved **`event_family_id`** cross-link (JD-FL-4) — one surge/rain source, counted once. Both V1
-# > sites are **inland**, so surge never reaches them: zero V1 payoff, real correlation cost → defer.
+# > **Coastal is built — via the hurricane cross-link** (JD-FL-12). Coastal surge is the **same storm** as a
+# > hurricane's wind, so it is **not** re-catalogued: each storm's surge (NOAA SLOSH MOM) is joined to that storm's
+# > hurricane wind on the reserved **`event_family_id`** (JD-FL-4) and combined **per subsystem** — one event,
+# > counted once. Built for **Discovery** (coastal solar) and the all-three sites **LA3** (solar) + **Amazon Wind**
+# > (wind); inland-only sites carry coastal = structural zero.
 #
 # > **The honest framing.** Orientation is a *responsibility*: each sub-peril's magnitude **and** source must be
 # > **named and traceable** — §2 states each one prominently.
@@ -136,9 +137,9 @@ obs = pd.DataFrame([
     ("[F] Pluvial", "24-hr rainfall DEPTH at RP → modeled ponding depth",
      "NOAA Atlas 14 precip-frequency → SCS Curve-Number runoff → DEM/lidar ponding (NO free pluvial depth grid)",
      "JD-FL-9 / AFL-P1"),
-    ("[C] Coastal (deferred)", "surge DEPTH (stillwater + wave) at RP",
-     "NOAA SLOSH surge — SHARED from the hurricane peril (not rebuilt)",
-     "JD-FL-1 / [REF] §5"),
+    ("[C] Coastal (built)", "surge DEPTH per storm, by hurricane category",
+     "NOAA SLOSH MOM + RAFT + HURDAT2 — shared w/ hurricane, joined on event_family_id",
+     "JD-FL-12/14/15"),
 ], columns=["sub-peril", "magnitude observable", "EXACT data source (role)", "tracks"])
 with pd.option_context("display.max_colwidth", 78, "display.width", 240):
     print(obs.to_string(index=False))
@@ -168,7 +169,7 @@ fig, ax = plt.subplots(figsize=(9.6, 4.4))
 boxes = [
     (0.04, 0.74, "[R] RIVERINE\nFEMA BLE depth grid\n(measured, ft→m)", "#9ecae1"),
     (0.04, 0.42, "[F] PLUVIAL\nNOAA Atlas 14 rainfall\n→ SCS-CN → ponding", "#a1d99b"),
-    (0.04, 0.10, "[C] COASTAL (deferred)\nNOAA SLOSH surge\n(shared w/ hurricane)", "#fdae6b"),
+    (0.04, 0.10, "[C] COASTAL\nNOAA SLOSH MOM + RAFT\n(compound w/ hurricane)", "#fdae6b"),
 ]
 for x, y, txt, c in boxes:
     ax.add_patch(plt.Rectangle((x, y), 0.30, 0.20, fc=c, ec="0.3"))
@@ -276,8 +277,9 @@ print("Keeping them separate is the load-bearing discipline — the same two-thr
 # losses → EAL / VaR / PML / TVaR (% of TIV). By construction the percentiles **reproduce the BLE anchors** at
 # 100/500-yr — a known-answer we verify below.
 #
-# **2. Sub-peril combine = co-sample + worse-source-wins (JD-FL-11).** With riverine + pluvial both built, M4 turns
-# two loss curves into **one** annual flood loss — and flood combines **differently from wind on purpose**:
+# **2. Sub-peril combine = co-sample + worse-source-wins (JD-FL-11).** M4 combines riverine + pluvial into **one
+# inland** annual flood loss (the coastal stream is a separate compound-Poisson surge×wind event stream, summed on
+# top — JD-FL-12) — and the inland combine works **differently from wind on purpose**:
 
 # %%
 combine = pd.DataFrame([
@@ -319,15 +321,15 @@ print("    EAL rests on the densified lower RPs (JD-FL-8). PML solid, EAL softer
 # %% [markdown]
 # > **Reuse the engine, specialize the bridge.** The shared MC is **untouched** — flood feeds it a per-year loss
 # > vector exactly as hail/wildfire/wind do (*standard interface, not standard physics*). What is flood-specific is
-# > the **annual-max** event model (not compound-Poisson) and the **worse-source-wins** sub-peril combine. EAL is
+# > the **annual-max** inland event model (the coastal stream *is* compound-Poisson) and the **worse-source-wins** inland combine. EAL is
 # > **additive** across sub-perils only loosely here (the headline maxes); the honest reporting is **marginals +
 # > combined headline + recorded envelope**, every metric off the **sampled** distribution (never expected-loss).
 
 # %% [markdown]
-# ## 7 · The pre-integrated RP-depth surface — the severity tail, *already integrated*  (JD-FL-2/6, learning-09)
+# ## 7 · The pre-integrated RP-depth surface — the severity tail, *already integrated*  (JD-FL-6/18, learning-09)
 #
 # For riverine there is the same shortcut wind had with the ASCE surface: the EVT is **already done**. `[REF]`/`[A]`
-# the **FEMA BLE / Risk-MAP / Fathom RP depth grids are pre-integrated return-period depth surfaces** — a hydraulic
+# the **FEMA BLE depth grids are pre-integrated return-period depth surfaces** (commercial First Street/Fathom are the same idea) — a hydraulic
 # model (HEC-RAS) already ran the probabilistic analysis and baked depth-by-return-period into the grid. Reading the
 # 100-yr and 500-yr depth = **sampling the return-level curve at fixed exceedance probabilities** — exactly the
 # wildfire move (FSim pre-integrated the seasons) and governed by the same lesson:
@@ -340,7 +342,7 @@ print("  RIVERINE : FEMA BLE depth grid  → depth at 1% (100-yr) + 0.2% (500-yr
 print("             lower RPs (10/25/50-yr) densified via regression Q(T) + BLE-anchored rating (JD-FL-8)")
 print("  PLUVIAL  : NO pre-integrated depth grid exists (the blind spot) → MODEL depth from Atlas 14 rainfall")
 print("             frequency via SCS-CN (JD-FL-9). Frequency is pre-integrated (Atlas 14); DEPTH is not.")
-print("  COASTAL  : SLOSH surge grids — pre-integrated, shared from hurricane (deferred)")
+print("  COASTAL  : SLOSH MOM surge grids — pre-integrated, shared from hurricane (built — JD-FL-12)")
 print()
 print("[caveat] Pre-integration is a BORROW, not a free lunch (learning-09): we inherit FEMA/HEC-RAS's assumptions,")
 print("vintage, datum, and resolution — the uncertainty moved upstream, it did not vanish. Riverine reads a real")
@@ -359,9 +361,9 @@ buckets = pd.DataFrame([
     ("1. Areal hit-or-miss", "point / narrow path", "full loss IF hit, $0 if missed (bimodal)",
      "Bernoulli × Minkowski", "hail · tornado", "—"),
     ("2. Field-intensity", "regional field", "a local value, different every event",
-     "sample the field per event", "HURRICANE (separate, deferred)", "—"),
+     "sample the field per event", "HURRICANE (separate peril)", "hurricane ✅"),
     ("3. Site-conditioned", "broad swath (pre-integrated)", "its own local depth profile (no miss)",
-     "depth field × elevation/height", "FLOOD — all sub-perils [R/F/C]", "wildfire ✅ (reuse)"),
+     "depth field × elevation/height", "FLOOD — all sub-perils [R/F/C]", "wildfire + flood ✅"),
 ], columns=["bucket", "footprint", "what the asset reads", "math", "peril / sub-peril", "built?"])
 with pd.option_context("display.max_colwidth", 38, "display.width", 200):
     print(buckets.to_string(index=False))
@@ -373,12 +375,12 @@ print("  • WIND   = sparse turbine point-cloud → PER-NODE depth (each pad vs
 print("             turbines sit on high ground → flood is a MINOR peril for wind (median project ~0% SFHA).")
 
 # %% [markdown]
-# **Cross-link note (no double-count, JD-FL-1/4).** Pluvial `[F]` and coastal `[C]` are **also secondary perils of
-# the deferred hurricane**: a tropical cyclone drives surge **and** rainfall **and** river rise at once (compound
-# flooding). The reserved **`event_family_id`** (JD-FL-4) is the hook that, when hurricane lands, binds a
-# TC-driven surge/rain event to its parent storm so **one event is counted once**, not separately in the flood and
-# hurricane pipelines. `[REF]` §7: *"use one surge source across both perils and avoid double-counting."* That is
-# why coastal is **deferred to hurricane**, not built standalone now.
+# **Cross-link note (no double-count, JD-FL-4/12).** Coastal `[C]` (surge) and pluvial `[F]` (rainfall) are **also
+# secondary perils of the hurricane**: a tropical cyclone drives surge **and** rainfall **and** river rise at once
+# (compound flooding). The reserved **`event_family_id`** (JD-FL-4) binds each TC-driven surge event to its parent
+# hurricane wind event so **one storm is counted once** — surge and wind combined **per subsystem**, not summed
+# across two pipelines. `[REF]` §7: *"use one surge source across both perils and avoid double-counting."* **Coastal
+# is built exactly this way** (JD-FL-12) — Discovery (solar) + Amazon Wind, joined to the hurricane peril.
 
 # %% [markdown]
 # ## 9 · The anchored depth-damage curve concept — `DR(depth ≤ onset) ≈ 0`, rising with depth  (AFL-8/W8, A22)
@@ -386,7 +388,7 @@ print("             turbines sit on high ground → flood is a MINOR peril for w
 # The two thresholds (§5) make the depth-damage curve **anchored**: damage onset (the equipment pad/component height)
 # is *above* zero depth, so `DR ≈ 0` until water reaches the vulnerable component, then the curve rises and **caps**
 # at the submerged-equipment ceiling (§4). The curve below is **illustrative** — M3 builds the real
-# `infrasure-damage-curves` curve (RIVERINE_FLOOD × asset, capex-weighted; `x0` *is* the component-elevation onset).
+# `infrasure-damage-curves` curve (RIVERINE_FLOOD × asset, capex-weighted, **source-agnostic** — one depth→damage path runs over riverine/pluvial/coastal alike; `x0` *is* the component-elevation onset).
 # It exists here to *show the shape the definition implies*:
 
 # %%
@@ -426,15 +428,15 @@ spec = pd.DataFrame([
     ("  source [R]", "FEMA BLE 100/500-yr grids + USGS NLDI→NSS regression (lower RPs) + 3DEP DEM", "[REF]/[STD]", "JD-FL-6/8"),
     ("magnitude observable [F]", "24-hr rainfall DEPTH at RP → modeled ponding depth", "[REF]", "AFL-P1"),
     ("  source [F]", "NOAA Atlas 14 → SCS Curve Number → DEM/lidar ponding (NO free depth grid — blind spot)", "[STD]", "JD-FL-9"),
-    ("magnitude observable [C]", "surge DEPTH at RP (deferred)", "[REF]", "JD-FL-1"),
-    ("  source [C]", "NOAA SLOSH — shared from hurricane via event_family_id (no double-count)", "[REF]", "JD-FL-1/4"),
+    ("magnitude observable [C]", "surge DEPTH per storm, by hurricane category (built)", "[REF]", "JD-FL-12"),
+    ("  source [C]", "NOAA SLOSH MOM + RAFT + HURDAT2 — shared w/ hurricane, joined on event_family_id", "[REF]", "JD-FL-12/14"),
     ("screening / support", "FEMA NFHL (zones) · EIA-860 (which assets) · 3DEP DEM (ground)", "[REF]", "AFL-5/10"),
     ("event basis", "annual-maximum flood, indexed by AEP / return period", "[JD]", "JD-FL-7"),
     ("practical bound", "sourced RP tail (500-yr BLE) + equipment-submersion damage cap (~28% wind / low solar)", "[JD]", "AFL-W8"),
     ("two thresholds", "RP basis (counts the flood) vs damage-onset DEPTH (pad/x0 height) — kept distinct", "[JD]", "JD-FL-7"),
     ("severity / event model", "annual-max MC on the loss-exceedance curve; PML anchored to BLE", "[JD]", "JD-FL-7/AFL-17"),
     ("sub-peril combine", "co-sample comonotonic + worse-source-wins headline + additive envelope (flood MAXES)", "[JD]", "JD-FL-11"),
-    ("pre-integrated tail", "BLE RP-depth grid = read (profile-assembly); pluvial has none → model", "[REF]", "JD-FL-2/learning-09"),
+    ("pre-integrated tail", "BLE RP-depth grid = read (profile-assembly); pluvial has none → model", "[REF]", "JD-FL-6/learning-09"),
     ("coupling type", "site-conditioned (bucket 3) for all sub-perils; depth × elevation, DEM-modulated", "[A]", "AFL-3/A21"),
     ("damage curve", "anchored at component pad/x0 (DR≈0), rises with depth, caps at submersion", "[A]", "AFL-8/W8"),
 ], columns=["item", "definition", "provenance", "tracks"])
@@ -449,15 +451,15 @@ with pd.option_context("display.max_colwidth", 78, "display.width", 240):
 #   checks** (reproduces the BLE anchors, monotone in depth) — basics-spot-on for the definition.
 # - **One driver, three sources** — inundation depth is shared, but riverine **measures** it (FEMA BLE), pluvial
 #   **models** it from rainfall (Atlas 14 → SCS-CN; the blind spot — no free depth grid), and coastal **borrows** it
-#   (SLOSH, deferred to hurricane). Naming the source per sub-peril is this layer's whole reason to exist.
+#   (SLOSH MOM, built as a compound surge×wind sub-peril joined to hurricane — JD-FL-12). Naming the source per sub-peril is this layer's whole reason to exist.
 # - **The two thresholds are on the depth axis** — the RP basis counts the flood; the damage-onset depth (pad / x0
 #   height) anchors the curve at `DR≈0`. Most shallow flooding barely scratches well-sited equipment; the curve caps
 #   at submersion (~28% wind / low solar).
 # - **Flood maxes, wind adds** — the sub-peril combine (worse-source-wins) is *intentionally* different from wind's
 #   additive combine, because flood sub-perils drown the **same** equipment with the **same** water.
 # - **Coupling is site-conditioned for all sub-perils** — reusing wildfire's M2; the asset difference (areal solar
-#   vs per-node wind) is *within* the bucket. Cross-link via `event_family_id` keeps pluvial/coastal from
-#   double-counting against the deferred hurricane.
+#   vs per-node wind) is *within* the bucket. Cross-link via `event_family_id` keeps coastal/pluvial from
+#   double-counting against the hurricane peril (coastal is built this way — JD-FL-12).
 #
 # **→ M0** ([`m0_input_data/`](../m0_input_data/README.md)): the real evidence already met this definition (FEMA NFHL
 # screen + BLE depth + 3DEP DEM ✅). **→ M1:** riverine = read the BLE RP surface + densify (JD-FL-8); pluvial =

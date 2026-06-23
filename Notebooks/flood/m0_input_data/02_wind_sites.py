@@ -11,7 +11,6 @@
 #     name: python3
 # ---
 
-
 # %% [markdown]
 # # Flood · Wind-farm — M0: wind site selection, geometry & coastal/all-three (all wind sites)
 #
@@ -49,7 +48,7 @@
 # **Green River is selected as the high site as the most-exposed project** (TX's Lane City would serve equally under
 # the same bathtub/gauge method). Output is the sweep manifest `flood_wind_m0_screening_sweep.json` + figure.
 #
-# > Decisions: [`decisions.md`](../../../../docs/plans/flood/decisions.md) (JD-FL-W2/W3/W4) · Site lock: `05`.
+# > Decisions: [`decisions.md`](../../../docs/plans/flood/decisions.md) (JD-FL-W2/W3/W4) · Site lock: part 2 below.
 
 # %%
 import json, math, time, re, hashlib
@@ -273,8 +272,8 @@ print("wrote:", OUT / "flood_wind_m0_screening_sweep.json")
 # | **baseline (low-flood)** | **Shepherds Flat** (reused from convective_wind) | OR — arid Columbia plateau | NFHL SFHA fraction ≈ 0 (mapped-dry) |
 # | **proving (high-flood)** | **Green River** | Lee Co., **IL** — Green/Rock river valley | NFHL SFHA fraction (turbines in floodplain) |
 #
-# > Plan: [`m_wind_farm.md`](../../../../docs/plans/flood/m_wind_farm.md) · Decisions:
-# > [`decisions.md`](../../../../docs/plans/flood/decisions.md) (JD-FL-W1..3) · Screening evidence:
+# > Plan: [`m_wind_farm.md`](../../../docs/plans/flood/m_wind_farm.md) · Decisions:
+# > [`decisions.md`](../../../docs/plans/flood/decisions.md) (JD-FL-W1..3) · Screening evidence:
 # > Solar analogue:
 # > `flood/m0_input_data/01` · Asset template:
 # > [`convective_wind/m0_input_data/03`](../../../convective_wind/m0_input_data/03_asset_geometry.ipynb).
@@ -305,7 +304,7 @@ print("wrote:", OUT / "flood_wind_m0_screening_sweep.json")
 #   Green River this is the west-edge 138 kV collector, which sits in the river valley and **floods**. Bathtub-sampled
 #   per node in M1.
 #
-# Full register: [`assumptions.md`](../../../../docs/plans/flood/assumptions.md).
+# Full register: [`assumptions.md`](../../../docs/plans/flood/assumptions.md).
 
 # %%
 
@@ -729,11 +728,11 @@ for s in SITES:
 # at one site** — riverine `[R]` + pluvial `[F]` + coastal `[C]`. The site is **Amazon Wind Farm US East**
 # (Perquimans Co. NC, 104 turbines / 208 MW) on the Albemarle Sound, which funnels hurricane surge inland so ~76% of
 # turbines are surge-exposed (Cat-3 onset) and ~11% also sit in riverine Zone A — surge is a material driver here, not
-# a tail. Mirroring `05` geometry + `03`
+# a tail. Mirroring the inland-wind geometry (part 2) + the coastal
 # surge screen, it builds the USWTDB turbine cloud + convex-hull boundary + collector substation + TIV, tags each
 # turbine with its riverine SFHA zone and coastal surge-onset category, maps the exposures, runs known-answer checks,
 # writes the per-turbine geometry parquet, and registers the site in the shared wind roster
-# `flood_wind_m0_sites.json` (run after `05`) with both an `m0_sfha` (riverine) and an `m0_coastal` block so the
+# `flood_wind_m0_sites.json` (registered after the inland sites in part 2) with both an `m0_sfha` (riverine) and an `m0_coastal` block so the
 # unified M1/M2 pick it up (coastal M1 keys on `m0_coastal.exposed`). It does not sample depth (that is M1/M2).
 
 # %%
@@ -936,9 +935,9 @@ print(f"✓ all-three site: surge {frac_surge*100:.0f}% · riverine {frac_sfha*1
 # %% [markdown]
 # ## 6 · Register Amazon Wind in the shared wind roster + write turbine geometry
 #
-# Reads `flood_wind_m0_sites.json` (Green River + Shepherds Flat from `05`) and registers the coast-front site
+# Reads `flood_wind_m0_sites.json` (Green River + Shepherds Flat from part 2) and registers the coast-front site
 # carrying **both** `m0_sfha` (riverine) and an `m0_coastal` block (re-running is safe — any prior Amazon entry is
-# replaced). Run order: `05` then `06`. The unified M1/M2 then see a 3-site wind roster; coastal M1 keys on
+# replaced). Run order: part 2 then part 3. The unified M1/M2 then see a 3-site wind roster; coastal M1 keys on
 # `m0_coastal.exposed`.
 
 # %%

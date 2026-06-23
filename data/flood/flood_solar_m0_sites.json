@@ -6,7 +6,7 @@
   "screen": {
     "population": "EIA-860 2024 operating solar fleet",
     "region": "LA/MS/AR (Lower-Mississippi)",
-    "metric": "FEMA NFHL SFHA membership (public proxy; Fathom depth deferred)",
+    "metric": "FEMA NFHL SFHA membership (public screen proxy; loss-driving depth from FEMA BLE in M1, JD-FL-6)",
     "n_candidates": 36,
     "min_mw": 20.0
   },

@@ -11,7 +11,6 @@
 #     name: python3
 # ---
 
-
 # %% [markdown]
 # # Flood · Solar — M0: solar site selection, geometry, depth & coastal/all-three (all solar sites)
 #
@@ -20,7 +19,7 @@
 # storm flood **depth (ft above ground)** is the M1 hazard input.
 #
 # **Data source:** **EIA-860** 2024 solar fleet (screen population) · FEMA **NFHL** flood zones · USGS **3DEP**
-# elevation · **OSM** Overpass `power=plant` footprints (capacity-radius circle fallback) · FEMA **BLE** depth
+# elevation · **OSM** Overpass `power=plant` footprints (real polygons; circle fallback) · FEMA **BLE** depth
 # (coverage probe) · NOAA **CFEM** coastal-surge composite.
 #
 # **What this notebook does:** locks every **solar** flood site and meets its evidence, in four sections: **(1)** screen
@@ -56,10 +55,11 @@
 # | **baseline (low-flood)** | **Hayhurst Texas Solar** (EIA 66880) | Culberson Co., **TX** — Chihuahuan desert | **no mapped flood** (true zero) |
 # | **proving (high-flood)** | **Elizabeth Solar** (EIA 66111) | Allen Parish, **LA** — Lower-Mississippi plain | FEMA **SFHA** in footprint + BLE depth |
 #
-# > **Public-data prototype.** The enriched registry (`powerplants_enriched_v2`, boundary polygons) and the Fathom
-# > depth grids are external-data-gated ([JD-FL-2/3](../../../docs/plans/flood/decisions.md)), so the screen runs on
-# > public data (EIA-860 ∩ FEMA NFHL) and geometry uses the capacity→radius circle. The screen population and metric
-# > are real; exact boundary polygons + depth swap in cleanly via the loader seam.
+# > **Public, self-serve data.** The screen runs on **EIA-860 ∩ FEMA NFHL** (national fleet × SFHA membership); the
+# > high site is confirmed by **FEMA BLE** depth ([JD-FL-6](../../../docs/plans/flood/decisions.md)). Real **OSM
+# > `power=plant` polygons** are fetched for both sites in part 2 (the enriched-registry polygon remains an optional
+# > one-place swap via the loader seam). Loss-driving depth is built in M1 from the BLE raster — Fathom is only a
+# > future commercial swap-in.
 # >
 # > Plan: [`m0_input_data.md`](../../../docs/plans/flood/m0_input_data.md) · Decisions:
 # > [`decisions.md`](../../../docs/plans/flood/decisions.md) (JD-FL-1..4).
@@ -270,7 +270,7 @@ manifest = {
     "screen": {
         "population": "EIA-860 2024 operating solar fleet",
         "region": "LA/MS/AR (Lower-Mississippi)",
-        "metric": "FEMA NFHL SFHA membership (public proxy; Fathom depth deferred)",
+        "metric": "FEMA NFHL SFHA membership (public screen proxy; loss-driving depth from FEMA BLE in M1, JD-FL-6)",
         "n_candidates": int(len(ranked)),
         "min_mw": UTIL_MW,
     },
@@ -286,9 +286,9 @@ print("wrote:", OUT / "flood_solar_m0_sites.json")
 #
 # - The screen runs end-to-end on **public** data: EIA-860 national solar fleet ∩ FEMA NFHL → a Lower-Mississippi
 #   high-flood proving site, with **Hayhurst** the verified true-zero baseline.
-# - **Deferred / swap-in later** (external data): exact **boundary polygons** (`powerplants_enriched_v2` — we
-#   use the capacity-radius circle now) and **Fathom RP depth grids** (the screen here is SFHA membership, a
-#   yes/no proxy; depth-at-return-period comes in M1).
+# - **Built downstream / optional swaps:** depth-at-return-period is built in **M1** from the **FEMA BLE** raster
+#   (JD-FL-6; the screen here is SFHA membership, a yes/no proxy). Real **OSM polygons** are fetched in part 2; the
+#   enriched-registry polygon (`powerplants_enriched_v2`) and commercial Fathom depth remain optional one-place swaps.
 # - **Caveat (honest):** NFHL is a centroid + buffer test on a circle footprint — a real polygon ∩ depth-grid will
 #   refine *how much* of the plant floods. SFHA membership is the right **screen**, not the final exposure.
 # - **Next (part 2 below):** meet the RP depth grids + 3DEP DEM at both
@@ -307,17 +307,17 @@ print("wrote:", OUT / "flood_solar_m0_sites.json")
 # **NFHL** layer 28 for flood-zone + Base Flood Elevation context.
 #
 # **What this notebook does:** meets the site-side of the flood coupling at the two solar sites locked in
-# `01`. It resolves each footprint through the boundary seam (both sites fall to
-# the capacity-radius circle — OSM has no polygon at either), samples the 3DEP DEM over each footprint for the
+# `01`. It resolves each footprint through the boundary seam (both sites resolve to **real OSM `power=plant`
+# polygons**; circle is the last-resort fallback), samples the 3DEP DEM over each footprint for the
 # elevation distribution, tags the FEMA NFHL flood zone + BFE, renders a flood-zone map per site, field-dictionaries
 # every layer (value · meaning · datum · units · source), and previews the coupling structure (the empty slot where
 # depth enters). Known-answer checks confirm Hayhurst (high, dry, not-SFHA) vs Elizabeth (low, flat, SFHA-in-footprint).
 # Output is the M0 context manifest `flood_solar_m0_dem_context.json` for M1.
 #
 # > Flood is *site-conditioned* (A21): the loss-driving quantity is depth-at-asset. This notebook captures the
-# > **ground-elevation** half for real; the **water-surface / depth** half (Fathom RP grids, JD-FL-2,
-# > external-data-gated) is left as an explicit empty slot, not faked. The boundary polygon (enriched-registry,
-# > both sites on circle fallback) likewise swaps in via the loader seam.
+# > **ground-elevation** half here; the **water-surface / depth** half is built in **M1** from the **FEMA BLE**
+# > raster (JD-FL-6) — captured for real, not faked. Geometry resolves to real OSM polygons; the enriched-registry
+# > polygon remains an optional one-place swap via the loader seam.
 # >
 # > Plan: [`m0_input_data.md`](../../../docs/plans/flood/m0_input_data.md) · Decisions: [`decisions.md`](../../../docs/plans/flood/decisions.md).
 
@@ -452,7 +452,7 @@ sites = pd.concat([sites, dem], axis=1)
 # ## 3 · FEMA flood-zone context (NFHL)
 #
 # The regulatory flood label at each site: SFHA zone + (where determined) the Base Flood Elevation. Zone `A` is the
-# 1%-annual floodplain *without* a computed BFE (approximate) — so depth there needs the Fathom grid, not FEMA.
+# 1%-annual floodplain *without* a computed BFE (approximate) — so depth there comes from the FEMA BLE raster / SFHA-bathtub method in M1 (JD-FL-6), not the FEMA BFE.
 
 # %%
 NFHL = "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/28/query"
@@ -556,7 +556,7 @@ field_dict = pd.DataFrame([
     ["footprint", "asset boundary (or circle fallback)", "km² / polygon", "EPSG:4326 (area via 5070)", "enriched→OSM→circle seam"],
     ["fld_zone", "FEMA SFHA flood zone (A/AE/X/…)", "categorical", "NFHL", "FEMA NFHL layer 28"],
     ["static_bfe", "Base Flood Elevation (if determined)", "feet", "NAVD88", "FEMA NFHL (null in Zone A)"],
-    ["depth_at_RP", "flood depth at return period — DEFERRED", "metres", "above ground", "Fathom RP grids (JD-FL-2, external-data-gated)"],
+    ["depth_at_RP", "flood depth at return period — built in M1", "metres", "above ground", "FEMA BLE raster ble_image + NLDI→NSS Q(T) (JD-FL-6)"],
 ], columns=["field", "meaning", "units", "datum/ref", "source"])
 print(field_dict.to_string(index=False))
 
@@ -565,14 +565,14 @@ print(field_dict.to_string(index=False))
 #
 # The M2 site-conditioned coupling is **`depth_at_asset = water_surface_elevation(event) − ground_elevation`**.
 # We now hold `ground_elevation` (the DEM distribution above); the `water_surface_elevation` per return period is
-# the **Fathom** input (deferred). The preview below shows the *structure* — the empty slot where depth enters — it
+# built in **M1** from the **FEMA BLE** raster (JD-FL-6). The preview below shows the *structure* — where depth enters — it
 # does **not** invent a depth.
 
 # %%
 for _, r in sites.iterrows():
     print(f"{r['name']} ({r['role']}):")
     print(f"   ground_elev ≈ {r['elev_mean_m']:.1f} m (NAVD88), footprint relief {r['elev_relief_m']:.1f} m, FEMA zone {r['fld_zone']}")
-    print(f"   depth_at_asset = WSE(event) − ground_elev   ← WSE from Fathom RP grid [DEFERRED]")
+    print(f"   depth_at_asset = WSE(event) − ground_elev   ← WSE from FEMA BLE raster (built in M1, JD-FL-6)")
     print(f"   → flat relief ({r['elev_relief_m']:.1f} m) means once WSE is known, the whole footprint floods to ~uniform depth\n"
           if r['elev_relief_m'] < 3 else
           f"   → {r['elev_relief_m']:.1f} m relief means depth will vary across the footprint (micro-topography matters)\n")
@@ -600,9 +600,10 @@ print("✓ all known-answer checks pass — the low-vs-high contrast holds on re
 # %%
 manifest = {
     "peril": "flood", "sub_peril": "riverine", "event_family_id": None, "layer": "M0",
-    "deferred": {
-        "depth_at_RP": "Fathom RP grids (hazard side; JD-FL-2, external-data-gated)",
-        "real_footprint": "enriched-registry polygon (asset side; both sites on circle fallback now)",
+    "depth_source": "FEMA BLE raster + NLDI→NSS Q(T), built in M1 (JD-FL-6)",
+    "optional_swaps": {
+        "depth": "commercial Fathom / First Street depth grid (future)",
+        "footprint": "enriched-registry polygon (real OSM polygons used now)",
     },
     "field_dictionary": field_dict.to_dict(orient="records"),
     "sites": json.loads(sites.drop(columns=[c for c in sites.columns if c == "geometry"], errors="ignore").to_json(orient="records")),
@@ -613,20 +614,35 @@ print("wrote:", OUT / "flood_solar_m0_dem_context.json")
 # %% [markdown]
 # ## Findings & what's next
 #
-# - **Real, public, done:** ground elevation (3DEP DEM) and FEMA zone at both sites — a clean low-vs-high contrast
-#   (Hayhurst ~970 m / dry / not-SFHA vs Elizabeth ~43 m / flat / SFHA-in-footprint). The DEM is the *asset* half of the
-#   flood coupling, captured for real.
-# - **Two deferred swap-ins, both external-data-gated, both left as explicit empty slots:** the **Fathom depth grid** (hazard
-#   side) and the **enriched-registry polygon** (asset shape — both sites are on circle fallback; OSM had no
-#   footprint). The boundary *seam* means the polygon swap is a one-place change.
-# - **Honest limit:** with depth deferred, M0 establishes *where* and *how high the ground sits*, not yet *how deep
-#   the water gets* — that is the first thing M1 consumes once Fathom lands.
-# - **Next — M1 (catalog):** assemble the flood frequency profile (depth-at-return-period) on the Fathom RP grids,
-#   built as a **sub-peril-keyed catalog with a reserved `event_family_id`** (JD-FL-4) — riverine now, pluvial/
-#   coastal ready.
+# - **Real, public, done:** ground elevation (3DEP DEM) + FEMA flood zone at both inland sites — a clean low-vs-high
+#   contrast (Hayhurst ~970 m / dry / not-SFHA vs Elizabeth ~43 m / flat / SFHA-in-footprint). The DEM is the *asset*
+#   half of the flood coupling, captured for real.
+# - **Geometry is real, not a circle:** both sites resolved to **real OSM `power=plant` polygons** (Hayhurst
+#   0.735 km² · Elizabeth 3.911 km²) — no capacity-radius fallback needed; the boundary *seam* keeps the
+#   enriched-registry polygon a one-place swap if ever wanted.
+# - **Depth is sourced, not deferred:** riverine depth is **FEMA BLE** (HEC-RAS-quality, NAVD88) at Elizabeth —
+#   `WSE − ground` is feet-scale and SFHA-confirmed; Hayhurst reads **true zero** (the null-vs-zero trap holds). BLE
+#   **supersedes the earlier Fathom plan** ([JD-FL-6](../../../docs/plans/flood/decisions.md)).
+# - **Next:** part 3 screens the Gulf/Atlantic fleet for the **coastal** site (Discovery) and part 4 registers the
+#   **all-three** site (LA3); then **M1 (catalog)** assembles the per-sub-peril depth field — riverine off the **BLE
+#   depth raster** (`ble_image`) + lower-RP densification (JD-FL-8), pluvial Atlas-14 runoff, coastal SLOSH — each
+#   `sub_peril`-keyed with the reserved `event_family_id` (JD-FL-4).
 
+# %% [markdown]
+# ## ═══ part 3/4 ═══  Flood · Coastal `[C]` × Solar — M0: surge screen → the coastal site (Discovery)
+#
+# **Magnitude metric:** the screening metric is the **surge-onset hurricane category** (NOAA CFEM / SLOSH-derived);
+# per-storm surge **depth (ft above ground)** is the M1 hazard input.
+#
+# **Data source:** **EIA-860** 2024 (cached, same product part 1 uses) · NOAA **CFEM** Coastal Flood Hazard
+# Composite (SLOSH-derived surge onset, by category) · **OSM** Overpass `power=plant` footprint (circle fallback).
+#
+# **What this notebook does:** screens the Gulf/Atlantic utility-scale solar fleet by surge onset and locks the
+# coastal proving site — **Discovery Solar Center** (EIA 63109, Cape Canaveral FL, Cat-1 onset) — against the
+# Hayhurst dry control, fetches its geometry, and emits `flood_solar_coastal_m0_sites.json` for the unified
+# M1/coastal catalog.
 
-
+# %%
 RAW = ROOT / "data" / "flood" / "raw"
 OUT = ROOT / "data" / "flood"
 RAW.mkdir(parents=True, exist_ok=True)
@@ -642,9 +658,11 @@ def cget(url, params=None, timeout=40):
     f.write_text(json.dumps(j)); return j
 print("repo root:", ROOT)
 
-# ============================================================================
-# 1 · EIA-860 operating solar fleet (cached — same product 01 uses)
-# ============================================================================
+
+# %% [markdown]
+# ### 1 · EIA-860 operating solar fleet (cached — same product 01 uses)
+
+# %%
 EIA_URL = "https://www.eia.gov/electricity/data/eia860/xls/eia8602024.zip"
 EIA_ZIP = RAW / "eia860_2024.zip"
 if not EIA_ZIP.exists():
@@ -667,10 +685,12 @@ cand = (fleet[fleet["State"].isin(COAST_STATES) & (fleet["solar_mw"] >= UTIL_MW)
         .sort_values("solar_mw", ascending=False).reset_index(drop=True))
 print(f"Gulf/Atlantic utility-scale (≥{UTIL_MW:.0f} MW) solar candidates: {len(cand)}")
 
-# ============================================================================
-# 2 · Surge screen — NOAA Coastal Flood Hazard Composite (SLOSH-derived, by category)
-#     onset_cat = lowest hurricane category whose surge reaches the site (lower = more exposed)
-# ============================================================================
+
+# %% [markdown]
+# ### 2 · Surge screen — NOAA Coastal Flood Hazard Composite (SLOSH-derived, by category)
+# onset_cat = lowest hurricane category whose surge reaches the site (lower = more exposed)
+
+# %%
 CFEM = ("https://www.coast.noaa.gov/arcgis/rest/services/FloodExposureMapper/"
         "CFEM_CoastalFloodHazardComposite/MapServer/identify")
 def surge_screen(lat, lon):
@@ -704,9 +724,11 @@ exposed = scr[scr["surge_exposed"]].sort_values(["onset_cat", "solar_mw"], ascen
 print(f"\nsurge-exposed coastal solar: {len(exposed)}/{len(scr)}")
 print(exposed[["Plant Name", "State", "County", "solar_mw", "onset_cat"]].head(20).to_string(index=False))
 
-# ============================================================================
-# 3 · Pick sites — high = most-exposed sizable FL/Atlantic plant (in hurricane footprint); low = Hayhurst
-# ============================================================================
+
+# %% [markdown]
+# ### 3 · Pick sites — high = most-exposed sizable FL/Atlantic plant (in hurricane footprint); low = Hayhurst
+
+# %%
 HIGH_EIA = 63109   # Discovery Solar Center, Brevard Co. FL (Cat-1 onset, 74 MW, Atlantic coast — Cape Canaveral)
 high = scr[scr["Plant Code"] == HIGH_EIA].iloc[0]
 print(f"\n→ HIGH (proving): {high['Plant Name']} (EIA {HIGH_EIA}), {high['State']} {high['County']}, "
@@ -721,9 +743,11 @@ print(f"→ LOW (baseline): {HAY['name']} — surge_screen={hay_oc} ({hay_desc[:
 def cap_radius_m(mw):
     return 69.0 * math.sqrt(mw * 1.3)   # capacity→radius proxy (DC≈AC·1.3); the hail/wildfire fallback
 
-# ============================================================================
-# 4 · High-site geometry — real OSM polygon (Overpass) with circle fallback (mirrors 01/02)
-# ============================================================================
+
+# %% [markdown]
+# ### 4 · High-site geometry — real OSM polygon (Overpass) with circle fallback (mirrors 01/02)
+
+# %%
 OVERPASS = "https://maps.mail.ru/osm/tools/overpass/api/interpreter"   # reachable mirror (per flood 02)
 def osm_polygon_wkt(lat, lon, r_m, name_hint=""):
     q = (f'[out:json][timeout:40];(way["power"="plant"](around:{r_m*2.5},{lat},{lon});'
@@ -758,9 +782,11 @@ hr = cap_radius_m(float(high["solar_mw"]))
 high_wkt, high_geom_src = osm_polygon_wkt(float(high["Latitude"]), float(high["Longitude"]), hr, high["Plant Name"])
 print(f"high-site geometry: {high_geom_src} (cap-radius {hr:.0f} m)")
 
-# ============================================================================
-# 5 · Emit M0 coastal manifest + screen CSV
-# ============================================================================
+
+# %% [markdown]
+# ### 5 · Emit M0 coastal manifest + screen CSV
+
+# %%
 sites = {
     "peril": "flood", "sub_peril": "coastal", "asset": "solar", "layer": "M0",
     "event_family_id": None,   # reserved — stamped in M1/coastal from the hurricane cross-link (JD-FL-4)
@@ -797,6 +823,7 @@ scr.sort_values(["surge_exposed", "onset_cat", "solar_mw"], ascending=[False, Tr
     OUT / "flood_solar_coastal_m0_site_screen.csv", index=False)
 print("\nwrote:", OUT / "flood_solar_coastal_m0_sites.json")
 print("wrote:", OUT / "flood_solar_coastal_m0_site_screen.csv")
+
 
 
 # %% [markdown]

@@ -26,8 +26,8 @@
 # site, both assets** in one pass — one M1 per sub-peril, with the asset mattering only at M2 (per JD-FL-19). Each
 # exposed site gets the same RAFT close-passage screen ([JD-FL-15](../../../docs/plans/flood/decisions.md): ≤50 km,
 # ≥64 kt) → a per-storm catalog (category, `event_family_id`), and an observed-anchored frequency `λ` from HURDAT2
-# close-passages within 50 km over the record. Coastal sites: solar **Discovery Solar Center** (FL, proving) +
-# **Hayhurst** (structural zero) and wind **Amazon Wind US East** (NC, the all-three site). The manifest carries a
+# close-passages within 50 km over the record. Coastal sites: solar **Discovery Solar Center** (FL, high-surge proving) + **LA3 West Baton Rouge** (LA, all-three) +
+# **Hayhurst** (structural zero), and wind **Amazon Wind Farm US East** (NC, all-three). The manifest carries a
 # per-site `sites` list (each asset's M2 reads its slug) plus `high_site`/`baseline_site` keys for the solar coastal
 # M2. The catalog combines with hurricane wind in M4 via `event_family_id` (JD-FL-12).
 

@@ -1,7 +1,8 @@
 # M1 — Catalog (the plan)
 
-*Phase 2 of the flood × solar build. The deliverable is the **flood event catalog**: a depth-at-return-period
-frequency profile at the asset, plus the engine-contract manifest M2→M4 consume.* Per the per-phase loop
+*Phase 2 of the flood build. The deliverable is the **flood event catalog**: the **asset-independent depth-at-return-
+period field** per sub-peril (one notebook each — riverine / pluvial / coastal — over both assets), plus the
+engine-contract manifest. The **field→asset reduction is done in M2** (the coupling), not here (JD-FL-19).* Per the per-phase loop
 ([feature_workflow](../../workflows/feature_workflow.md)): Questions → Research → Detailed Plan → Execute → Feedback →
 Document.
 
@@ -28,7 +29,9 @@ Document.
 
 ## Questions (what M1 must resolve)
 
-1. **Which gauge controls the plant's flood?** Bayou Galion sits in Morehouse Parish LA, FEMA Zone A. Candidates from
+1. **Which gauge controls the plant's flood?** *(Historical — Bayou Galion was the early screen pick, since superseded
+   by **Elizabeth Solar, Allen Parish LA** as the built riverine high site; the gauge-route below was not used.)* Bayou
+   Galion sits in Morehouse Parish LA, FEMA Zone A. Candidates from
    the M0 probe: **Bayou Bartholomew** (runs through Morehouse — likely the local source) vs the **Ouachita River**
    (larger, regional). Pick the stream whose floodplain the plant occupies; confirm by drainage path + DEM.
 2. **Record length & quality** — how many annual peaks at the chosen gauge? Bulletin 17C wants ≳ 10, ideally 30+.
@@ -41,9 +44,9 @@ Document.
    ([AFL-12](assumptions.md)); flag the water-surface-slope error, decide whether a simple slope correction is needed.
 6. **Rating-curve availability** — does the gauge publish a stage-discharge rating (NWIS RatingDepot)? If not, fit
    peak **stage** frequency directly (USGS peaks carry gage height alongside discharge) as the fallback.
-7. **The event-model bridge (still open)** — the RP depth curve must feed the **shared compound-Poisson MC** (M4). For
-   an annual-maximum riverine series: convert the RP curve to (occurrence λ + severity distribution) the MC samples,
-   **or** sample the annual-max series directly. This is *the* open call — settle it here before M4 ([decisions.md](decisions.md)).
+7. **The event-model bridge (SETTLED, [JD-FL-7](decisions.md)).** *(Originally the open call.)* The RP depth curve
+   feeds the shared MC as an **annual-maximum MC** — sample the annual-max loss-exceedance curve directly (not a
+   compound-Poisson stream, which mis-fits flood). Coastal instead uses a compound-Poisson surge×wind track (JD-FL-12).
 
 ## Data sources
 
@@ -97,7 +100,8 @@ Document.
 - **Pre-integrated depth grid** (Fathom / FEMA Risk MAP) → swap in as the spine if sourced ([JD-FL-5](decisions.md)
   revisit), demoting extraction to cross-check.
 - **2-D hydraulics** (HEC-RAS / gauge-offset slope) → V1 uses the `stage − DEM` proxy on a flat site; refine later.
-- **Pluvial sub-peril** → add as a second catalog row (the JD-FL-4 family hook) on NOAA Atlas 14, post-riverine.
+- **Pluvial sub-peril** → **built** as its own M1 notebook (Atlas 14 → SCS-CN runoff) over both assets; **coastal**
+  (SLOSH surge) is **built** too (JD-FL-12). The JD-FL-4 family hook held — adding them was a one-notebook-each change.
 
 ## On greenlight
 

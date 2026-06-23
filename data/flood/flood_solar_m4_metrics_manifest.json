@@ -142,7 +142,7 @@
   "metric_frame": "per-year loss vectors; PML_T = (1-1/T) percentile (DD-4)",
   "caveats": [
     "RIVERINE: BLE tail + JD-FL-8 regression densification (lower RPs); PML@100/500 BLE-anchored (solid).",
-    "PLUVIAL: blind-spot \u2014 Atlas-14 rainfall + SCS-CN + sheet ponding; NO depth anchor, assumption-driven (retention r, ponding-fraction f) \u2192 screening-grade; often DOMINATES the combined loss (driven by the f exposure knob).",
+    "PLUVIAL: blind-spot \u2014 Atlas-14 rainfall + SCS-CN + sheet ponding; NO depth anchor, assumption-driven (retention r, ponding-fraction f) \u2192 screening-grade; small once ponding is lidar-grounded (JD-FL-15) \u2014 riverine dominates the inland combine.",
     "COMBINE (JD-FL-11): comonotonic worse-wins \u2014 overstates correlation slightly, ignores compound stacking; independent-sum / additive-stacking are the sensitivity variants.",
     "value\u221darea exposure; Elizabeth TIV estimated; medium-confidence curves; duration unmodeled; regression-Q + pluvial-knob uncertainty not yet propagated."
   ],

@@ -3,9 +3,10 @@
   "sub_peril": "riverine",
   "event_family_id": null,
   "layer": "M0",
-  "deferred": {
-    "depth_at_RP": "Fathom RP grids (hazard side; JD-FL-2, external-data-gated)",
-    "real_footprint": "enriched-registry polygon (asset side; both sites on circle fallback now)"
+  "depth_source": "FEMA BLE raster + NLDI\u2192NSS Q(T), built in M1 (JD-FL-6)",
+  "optional_swaps": {
+    "depth": "commercial Fathom / First Street depth grid (future)",
+    "footprint": "enriched-registry polygon (real OSM polygons used now)"
   },
   "field_dictionary": [
     {
@@ -38,10 +39,10 @@
     },
     {
       "field": "depth_at_RP",
-      "meaning": "flood depth at return period \u2014 DEFERRED",
+      "meaning": "flood depth at return period \u2014 built in M1",
       "units": "metres",
       "datum/ref": "above ground",
-      "source": "Fathom RP grids (JD-FL-2, external-data-gated)"
+      "source": "FEMA BLE raster ble_image + NLDI\u2192NSS Q(T) (JD-FL-6)"
     }
   ],
   "sites": [
