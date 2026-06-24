@@ -11,37 +11,37 @@
   "coastal_compound": {
     "Discovery Solar Center": {
       "lambda_per_yr": 0.0289,
-      "n_storms_wind": 280,
-      "wind_only_eal_pct": 0.2507,
-      "surge_only_eal_pct": 0.1402,
+      "n_storms_surge": 117,
+      "wind_only_eal_pct": 0.309,
+      "surge_only_eal_pct": 0.3319,
       "compound": {
-        "EAL_pct": 0.3375,
-        "PML100_pct": 9.3479,
-        "PML250_pct": 20.6975,
-        "PML500_pct": 38.7164
+        "EAL_pct": 0.5142,
+        "PML100_pct": 19.6544,
+        "PML250_pct": 39.1328,
+        "PML500_pct": 40.1027
       }
     },
     "LA3 West Baton Rouge Solar Facility": {
       "lambda_per_yr": 0.0173,
-      "n_storms_wind": 51,
-      "wind_only_eal_pct": 0.0929,
-      "surge_only_eal_pct": 0.02,
+      "n_storms_surge": 11,
+      "wind_only_eal_pct": 0.1195,
+      "surge_only_eal_pct": 0.0928,
       "compound": {
-        "EAL_pct": 0.1074,
-        "PML100_pct": 4.5977,
-        "PML250_pct": 6.5134,
-        "PML500_pct": 7.2188
+        "EAL_pct": 0.1866,
+        "PML100_pct": 4.9895,
+        "PML250_pct": 7.056,
+        "PML500_pct": 13.0014
       }
     }
   },
   "total_flood": {
     "Discovery Solar Center": {
       "inland_eal_pct": 0.0,
-      "coastal_eal_pct": 0.3375,
-      "EAL_pct": 0.3375,
-      "PML100_pct": 9.3479,
-      "PML250_pct": 20.6975,
-      "PML500_pct": 38.7164
+      "coastal_eal_pct": 0.5142,
+      "EAL_pct": 0.5142,
+      "PML100_pct": 19.6544,
+      "PML250_pct": 39.1328,
+      "PML500_pct": 40.1027
     },
     "Elizabeth Solar Plant": {
       "inland_eal_pct": 0.1627,
@@ -61,11 +61,11 @@
     },
     "LA3 West Baton Rouge Solar Facility": {
       "inland_eal_pct": 0.6534,
-      "coastal_eal_pct": 0.1074,
-      "EAL_pct": 0.7607,
-      "PML100_pct": 7.0026,
-      "PML250_pct": 10.0666,
-      "PML500_pct": 12.2387
+      "coastal_eal_pct": 0.1866,
+      "EAL_pct": 0.84,
+      "PML100_pct": 7.2974,
+      "PML250_pct": 12.8388,
+      "PML500_pct": 14.5796
     }
   },
   "wind_leg_source": "data/hurricane/tc_m3_damage.parquet (hurricane \u00d7 solar, per-storm gust at LA3/Discovery, event_family_id join)",
@@ -165,13 +165,13 @@
   },
   "metrics_usd": {
     "Discovery Solar Center": {
-      "EAL": 372927.17,
+      "EAL": 568088.78,
       "VaR95 (AEP-PML20)": 0.0,
-      "VaR99 (AEP-PML100)": 10327924.13,
-      "VaR99.6 (AEP-PML250)": 22867359.79,
-      "PML500 (AEP-99.8)": 42775283.62,
-      "TVaR99": 25515527.99,
-      "OEP-PML100": 10154095.99
+      "VaR99 (AEP-PML100)": 21714822.31,
+      "VaR99.6 (AEP-PML250)": 43235329.62,
+      "PML500 (AEP-99.8)": 44306897.07,
+      "TVaR99": 39027105.06,
+      "OEP-PML100": 21669103.13
     },
     "Elizabeth Solar Plant": {
       "EAL": 344450.68,
@@ -192,24 +192,24 @@
       "OEP-PML100": 102979.52
     },
     "LA3 West Baton Rouge Solar Facility": {
-      "EAL": 564089.37,
-      "VaR95 (AEP-PML20)": 4741193.84,
-      "VaR99 (AEP-PML100)": 5192446.38,
-      "VaR99.6 (AEP-PML250)": 7464416.48,
-      "PML500 (AEP-99.8)": 9074986.02,
-      "TVaR99": 8503640.59,
-      "OEP-PML100": 4966884.47
+      "EAL": 622861.94,
+      "VaR95 (AEP-PML20)": 4751119.62,
+      "VaR99 (AEP-PML100)": 5411020.42,
+      "VaR99.6 (AEP-PML250)": 9519996.57,
+      "PML500 (AEP-99.8)": 10810744.57,
+      "TVaR99": 13794002.93,
+      "OEP-PML100": 5232019.83
     }
   },
   "metrics_pct_of_tiv": {
     "Discovery Solar Center": {
-      "EAL": 0.3375,
+      "EAL": 0.5142,
       "VaR95 (AEP-PML20)": 0.0,
-      "VaR99 (AEP-PML100)": 9.3479,
-      "VaR99.6 (AEP-PML250)": 20.6975,
-      "PML500 (AEP-99.8)": 38.7164,
-      "TVaR99": 23.0944,
-      "OEP-PML100": 9.1906
+      "VaR99 (AEP-PML100)": 19.6544,
+      "VaR99.6 (AEP-PML250)": 39.1328,
+      "PML500 (AEP-99.8)": 40.1027,
+      "TVaR99": 35.3239,
+      "OEP-PML100": 19.613
     },
     "Elizabeth Solar Plant": {
       "EAL": 0.1627,
@@ -230,13 +230,13 @@
       "OEP-PML100": 0.28
     },
     "LA3 West Baton Rouge Solar Facility": {
-      "EAL": 0.7607,
-      "VaR95 (AEP-PML20)": 6.3941,
-      "VaR99 (AEP-PML100)": 7.0026,
-      "VaR99.6 (AEP-PML250)": 10.0666,
-      "PML500 (AEP-99.8)": 12.2387,
-      "TVaR99": 11.4682,
-      "OEP-PML100": 6.6984
+      "EAL": 0.84,
+      "VaR95 (AEP-PML20)": 6.4074,
+      "VaR99 (AEP-PML100)": 7.2974,
+      "VaR99.6 (AEP-PML250)": 12.8388,
+      "PML500 (AEP-99.8)": 14.5796,
+      "TVaR99": 18.6028,
+      "OEP-PML100": 7.056
     }
   },
   "occurrence_basis_note": "OEP-PML100 = per-EVENT occurrence basis; AEP metrics = annual aggregate. TOTAL occurrence set per year = {inland annual-max as ONE occurrence} \u222a {each coastal storm's compound loss}; OEP_total = max(inland, max coastal storm). AEP_total = inland + \u03a3 coastal storms. Inland-only sites \u2192 OEP == AEP (annual-max is one occurrence/yr).",

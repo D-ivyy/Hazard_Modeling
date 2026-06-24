@@ -233,8 +233,10 @@ for cs in coastal_solar:
     surge = pd.read_parquet(OUT / f"{cslug}_flood_solar_coastal_m3_surge_loss.parquet")
     TIV = float(surge["tiv_usd"].iloc[0]); tiv_by_site[nm] = TIV
     w = wind_leg[wind_leg.site == nm][["event_family_id", "gust_3s_mph"]]
-    df = w.merge(surge[["event_family_id", "conditional_depth_ft", "exposure_fraction"]], on="event_family_id", how="left")
-    df["conditional_depth_ft"] = df["conditional_depth_ft"].fillna(0.0); df["exposure_fraction"] = df["exposure_fraction"].fillna(0.0)
+    # ANCHOR on the 50 km surge list (matches λ_surge); pull the hurricane wind in as a lookup.
+    # (Surge ⊂ wind by radius, so wind is never missing; gust=0 fallback is just defensive.)
+    df = surge[["event_family_id", "conditional_depth_ft", "exposure_fraction"]].merge(w, on="event_family_id", how="left")
+    df["gust_3s_mph"] = df["gust_3s_mph"].fillna(0.0)
     g, d, ex = df["gust_3s_mph"].values, df["conditional_depth_ft"].values, df["exposure_fraction"].values
     wind_DR = {s: _cdr(WIND_C[s], g) for s in WIND_C}                 # PV, MOUNTING, SUBSTATION
     surge_DR = {s: ex * _cdr(SURGE_C[s], d) for s in SURGE_C}         # exposure-scaled (areal surge)
@@ -254,11 +256,11 @@ for cs in coastal_solar:
     if n_ev:
         np.maximum.at(oep_coa, yr, df["compound_loss"].values[idx])
     coastal_oep_vectors[nm] = oep_coa / TIV
-    compound_metrics[nm] = {"lambda_per_yr": lam, "n_storms_wind": int(len(df)),
+    compound_metrics[nm] = {"lambda_per_yr": lam, "n_storms_surge": int(len(df)),
                             "wind_only": cp_metrics(annual_of("wind_loss"), TIV), "surge_only": cp_metrics(annual_of("surge_loss"), TIV),
                             "compound": cp_metrics(coa_annual, TIV)}
     cm = compound_metrics[nm]
-    print(f"{nm} — coastal compound (λ={lam:.4f}/yr, {len(df)} wind storms): wind-only {cm['wind_only']['EAL_pct']:.3f}% · "
+    print(f"{nm} — coastal compound (λ={lam:.4f}/yr, {len(df)} surge storms): wind-only {cm['wind_only']['EAL_pct']:.3f}% · "
           f"surge-only {cm['surge_only']['EAL_pct']:.3f}% · COMPOUND {cm['compound']['EAL_pct']:.3f}% · PML500 {cm['compound']['PML500_pct']:.2f}%")
 
 # %% [markdown]
@@ -409,7 +411,7 @@ manifest = {
     "event_model": "INLAND (riverine+pluvial): annual-max MC, co-sampled comonotonic worse-source-wins (JD-FL-7/11). "
                    "COASTAL: compound-Poisson surge×hurricane-wind, per-subsystem max(wind,surge) on event_family_id (JD-FL-12). "
                    "TOTAL = inland + coastal (independent streams). The UNIFIED solar M4 (JD-FL-17, LA3 all-three site).",
-    "coastal_compound": {nm: {"lambda_per_yr": cm["lambda_per_yr"], "n_storms_wind": cm["n_storms_wind"],
+    "coastal_compound": {nm: {"lambda_per_yr": cm["lambda_per_yr"], "n_storms_surge": cm["n_storms_surge"],
                               "wind_only_eal_pct": round(cm["wind_only"]["EAL_pct"], 4),
                               "surge_only_eal_pct": round(cm["surge_only"]["EAL_pct"], 4),
                               "compound": {k: round(v, 4) for k, v in cm["compound"].items()}}

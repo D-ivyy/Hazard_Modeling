@@ -226,7 +226,12 @@ def cp_metrics(annual, tiv):
 for cs in coastal_wind_sites:
     cslug, nm, lam = cs["slug"], cs["name"], cs["lambda_per_yr"]
     TIV = float(sites[sites.name == nm]["tiv_usd"].iloc[0])
-    w = wind_leg[wind_leg.slug == cslug]
+    # Restrict the wind leg to the ≤50 km SURGE event set: this is the surge-driven coastal compound, so only storms
+    # that actually produce surge belong here. (The hurricane wind leg is now the full ≤100 km set — 95 storms — so the
+    # 50–100 km wind-only storms are carried by the STANDALONE hurricane-wind product, not double-counted here.)
+    surge_cat = pd.read_parquet(OUT / f"{cslug}_flood_coastal_m1_catalog.parquet")
+    surge_efids = set(surge_cat["event_family_id"].astype(int))
+    w = wind_leg[(wind_leg.slug == cslug) & (wind_leg.event_family_id.astype(int).isin(surge_efids))]
     nd = pd.read_parquet(OUT / f"{cslug}_flood_wind_coastal_m2_node_depths.parquet")
     t = nd[nd.kind == "turbine"]; sub = nd[nd.kind == "substation"].iloc[0]
     surge_DR_cat = {}                                    # per-category, per-subsystem surge DR (farm-level, matched to wind leg)

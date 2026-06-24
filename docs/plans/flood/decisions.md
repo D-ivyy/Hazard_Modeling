@@ -34,6 +34,41 @@ Running record of the non-obvious design decisions for the flood → solar build
 
 ---
 
+## JD-FL-20 · Coastal-compound surge population fix — **the solar coastal MC must sample the 50 km surge storms, not the 100 km wind storms** (rate/population mismatch diluted surge ~2.4–4.6×)
+
+**Date:** 2026-06-23 · **Status:** ✅ **executed** (2026-06-23) · Corrects a sampling bug in solar coastal M4; wind-farm was already correct · *basics-spot-on / single-source-of-truth*
+
+**Context.** The solar coastal-compound stream ([JD-FL-12](#jd-fl-12)/[JD-FL-16](#jd-fl-16)) joins flood surge to hurricane
+wind on `event_family_id`, then Monte-Carlos a compound-Poisson loss at the **surge** rate `λ_surge` ([JD-FL-15](#jd-fl-15):
+storms within **50 km**). But the join was **anchored on the hurricane wind product** (`tc_m3_damage.parquet`), which carries
+every storm within **100 km** (the wind radius, [JD-TC-8](../hurricane/decisions.md)) — **280** storms at Discovery, **51** at
+LA3 — with surge left-joined on (depth = 0 for the 163 / 40 storms beyond 50 km). The MC then drew
+`idx = rng.integers(0, len(df))` **uniformly over the 100 km population** while firing at the **50 km rate**. So each "surge
+event" had only a 117/280 (LA3 11/51) chance of carrying any surge → surge loss **diluted by `n_wind / n_surge` = 2.39×
+(Discovery) / 4.64× (LA3)**.
+
+**Root cause — an original oversight, not a regression.** The coastal block was born with the bug in commit `34727b4`
+(2026-06-21) — the *same commit* that built the **wind-farm** coastal leg **correctly** (wind sourced from the 50 km
+flood-coastal M1 catalog → register note: *"same 24 storms, 0 orphans"*). The two assets were wired with different patterns:
+solar reused the pre-existing 100 km hurricane wind product ([JD-FL-16](#jd-fl-16)) and never narrowed it to the 50 km surge
+subset; wind-farm built its wind leg on the 50 km catalog. The variable was even self-labeled `n_storms_wind`.
+
+**Fix (executed).** Anchor the join on flood's own 50 km surge list and pull the hurricane wind in as a lookup — the
+wind-farm pattern (`Notebooks/flood/solar/m4_loss_metrics/01_loss_metrics.py`):
+- `df = surge[[...]].merge(w, on="event_family_id", how="left")` (was `w.merge(surge, how="left")`); `gust=0` fallback
+  (surge ⊂ wind by radius → never missing).
+- `n_storms_wind` → `n_storms_surge` (the sampled population is now the surge storms: 117 Discovery / 11 LA3).
+
+**Numbers (before → after).** Discovery surge-only EAL 0.140 → **0.332%** (2.4×), compound 0.338 → **0.514%**; LA3 surge-only
+0.020 → **0.093%** (4.6×), total flood 0.761 → **0.840%**, PML500 12.2 → **14.58%**. All M4 known-answer checks pass.
+Wind-farm unchanged (already correct).
+
+**Caveat (unchanged scope).** This stream still counts only the wind **of surge-bearing storms** at `λ_surge`; wind from
+50–100 km passers (no surge) is not added for these cross-link rider sites — they are dropped from the hurricane headline by
+design ([JD-FL-16](#jd-fl-16)). That matches the wind-farm coastal leg and is intentional, not part of this fix.
+
+---
+
 ## JD-FL-19 · Flood structure — **Path 2: asset-independent M1 (field) + coupling in M2; M0/M1 shared at top, per-asset M2–M4** — aligns flood with the other four hazards
 
 **Date:** 2026-06-21 · **Status:** ✅ **executed** (2026-06-21) · Fixes the M1/M2 layer-definition violation; sets the multi-asset template · *standard-interface / modular*
@@ -231,8 +266,8 @@ registers LA3 in the inland roster + dem_context + coastal roster; **hurricane x
 `tc_m0_sites.json`, re-ran hurricane M1/M2/M3 -> LA3 51-storm gust to 140 mph in `tc_m3_damage`, Discovery/Everglades
 preserved); flood M1 auto-picks-up LA3 across all three; **solar M2/M3/M4 UNIFIED into one file each** (collapsed
 `01`+`02_coastal`; SLOSH via GDAL-decompress so it runs in the hazard env). M4 = inland annual-max + coastal compound
-(per-subsystem `max(wind_DR,surge_DR)`, shared = PV_ARRAY+SUBSTATION) + total. **Numbers:** LA3 total flood **0.761%**
-(inland 0.653 + coastal compound 0.107); Discovery 0.338% (coastal-only); **Elizabeth 0.163% preserved** (inland-only);
+(per-subsystem `max(wind_DR,surge_DR)`, shared = PV_ARRAY+SUBSTATION) + total. **Numbers** *(coastal corrected per [JD-FL-20](#jd-fl-20), 2026-06-23 — original build had 0.761/0.107/0.338)*: LA3 total flood **0.840%**
+(inland 0.653 + coastal compound **0.187**); Discovery **0.514%** (coastal-only); **Elizabeth 0.163% preserved** (inland-only);
 Hayhurst 0.030%. Both assets are now unified on their own all-three site; the disjoint-site Elizabeth/Discovery examples
 remain as single-peril references. (Full per-storm three-way Level-1 still deferred — same JD-FL-17 inland-event-ify blocker.)
 
