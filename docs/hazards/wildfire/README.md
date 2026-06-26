@@ -5,6 +5,12 @@
 credible per-site frequency + severity, how the two deployments differ, and what's reliable vs. not. How
 fire *damages a specific asset* lives in the per-asset pages ([wildfire × solar](solar.md)).
 
+> **New to wildfire physics/data?** Start with
+> [`fundamentals_before_m0.md`](fundamentals_before_m0.md): the prerequisite mental model for FSim BP/FLP,
+> conditional severity, site-conditioned coupling, and the oozing issue.
+> For the source decision itself, read [`source_selection.md`](source_selection.md): why native FSim is the V1
+> spine, why WRC is a cross-check, and which sources are deferred.
+
 > **One-line state:** wildfire is the **"ingest a finished hazard product"** peril — we read frequency and
 > severity straight off the USFS **FSim** simulation rather than building them from a raw record. The catalog
 > and per-site frequency are trustworthy; the numbers are **real but approximate** — the severity *damage
@@ -60,14 +66,15 @@ Two facts about this product drive everything downstream:
 | **Primary source** | USFS **FSim** native (`RDS-2016-0034-3`, 3rd ed., LANDFIRE 2020) — **270 m**, the **full FIL1–6 histogram** + BP. The **severity spine** ([DD-W4](../../plans/wildfire/decisions.md)). |
 | **Cross-check** | **WRC 2.0** (`RDS-2020-0016-2`, geoplatform ImageServers) — **30 m**, but intensity *collapsed* (CFL, FLEP4, FLEP8). Fine-grain texture / independent vintage only. |
 | **What they are** | **Two published product views of the *same* FSim run** — they differ in grain, vintage, and aggregation, *not* in the hazard they describe ([LL07](../../learning_logs/07_one_simulation_two_products.md)). |
-| **Access** | Direct public USFS rasters, no auth, CC BY 4.0 — **no Hydronos** ([DD-W3](../../plans/wildfire/decisions.md); the paid wrapper only *validated* the public data, then was dropped). |
+| **Access** | Direct public USFS rasters, no auth, CC BY 4.0 ([DD-W3](../../plans/wildfire/decisions.md)). |
 | **Curation burden** | **low** — the inverse of hail. The hazard is a finished product; the work is *ingest + reconcile + assemble onto the asset*, not *build*. |
 
 This is the mirror image of hail. Hail must be **self-built and anchored** from raw MESH (no ready-made
 product gives both frequency and a size distribution); wildfire gets a **pre-integrated field** it can largely
 ingest, so the modeling effort moves *downstream* — to coupling the field onto a site (M2) and to the damage
-curve (M3). Sourcing reasoning: [`discussion/wildfire/`](../../extra/discussion/wildfire/README.md)
-(`01` scope → `02` data dictionary → `03` coupling).
+curve (M3). Source-selection rationale: [`source_selection.md`](source_selection.md). Deeper reasoning:
+[`discussion/wildfire/`](../../extra/discussion/wildfire/README.md) (`01` scope → `02` data dictionary → `03`
+coupling).
 
 ## 3. How we model it — two deployments of one engine
 
@@ -152,6 +159,7 @@ where fire is genuinely absent and material where it's real — the proof-of-flo
 ## 7. Go deeper
 
 - **Reasoning:** [`discussion/wildfire/`](../../extra/discussion/wildfire/README.md) (`01` scope · `02` data dictionary · `03` coupling).
+- **Source selection:** [`source_selection.md`](source_selection.md).
 - **Decisions / plan-of-record:** [`plans/wildfire/`](../../plans/wildfire/README.md) (DD-W3…DD-W8 + per-layer plans).
 - **Code:** [`Notebooks/wildfire/`](../../../Notebooks/wildfire/m0_input_data/README.md) (M0 → M1 → the solar cell).
 - **Lessons:** [LL07 one simulation, two products](../../learning_logs/07_one_simulation_two_products.md) · [LL08 oozing](../../learning_logs/08_oozing_developed_pixels.md) · [LL09 pre-integrated vs. extracted](../../learning_logs/09_pre_integrated_vs_extracted_catalog.md).

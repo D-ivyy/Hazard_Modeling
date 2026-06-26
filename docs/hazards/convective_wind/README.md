@@ -6,6 +6,12 @@ different data products into a credible frequency + severity, how the two deploy
 reliable vs. not. How wind *damages a specific asset* lives in the per-asset pages
 ([convective wind × onshore wind](wind.md)).
 
+> **New to convective-wind physics/data?** Start with
+> [`fundamentals_before_m0.md`](fundamentals_before_m0.md): the prerequisite mental model for the authored
+> layer-0 definition, 3-s gust, tornado-vs-strong-wind split, and the two different M2 coupling paths.
+> For the source decision itself, read [`source_selection.md`](source_selection.md): why strong wind uses ASCE
+> return-period gusts while tornado uses SPC/NOAA path/report evidence.
+
 > **One-line state:** convective wind is **one peril, two sub-perils** — *tornado* (rare, violent, narrow) and
 > *strong / straight-line wind* (common, broad, mild) — sharing one observable (the **3-s peak gust**) but
 > needing two catalog machineries. For a wind farm it is a **tail peril**: the headline risk is the rare
@@ -70,7 +76,7 @@ The **tornado curation is the hard, hail-like half**: the SPC record's weak-even
 tornadoes, and wind reports are ~92 % *estimated*. Fitting λ on this naively (the old repo's omission) bakes in
 the reporting bias — so M1 bias-corrects on a detection-stable window and cross-checks against the EF2+
 record. The **strong-wind half is the easy, wildfire-like one**: ASCE already integrated the EVT, so M1 just
-*reads* the curve. Sourcing reasoning:
+*reads* the curve. Source-selection rationale: [`source_selection.md`](source_selection.md). Deeper reasoning:
 [`discussion/convective_wind/`](../../extra/discussion/convective_wind/README.md) (`01` taxonomy → `03`
 thresholds).
 
@@ -175,6 +181,7 @@ tornado record.
 ## 7. Go deeper
 
 - **Reasoning:** [`discussion/convective_wind/`](../../extra/discussion/convective_wind/README.md) (`01` sub-peril taxonomy · `02` coupling buckets · `03` thresholds · `04` aggregation & double-counting).
+- **Source selection:** [`source_selection.md`](source_selection.md).
 - **Decisions / plan-of-record:** [`plans/convective_wind/`](../../plans/convective_wind/README.md) (DD-WN-* + the authored [hazard definition](../../plans/convective_wind/00_hazard_definition.md)).
 - **Code:** [`Notebooks/convective_wind/`](../../../Notebooks/convective_wind/README.md) (layer0 → M0 → M1 → the wind-farm cell).
 - **Lessons:** [LL06 collection-size cancels](../../learning_logs/06_collection_region_size_cancels.md) · [LL09 pre-integrated vs. extracted](../../learning_logs/09_pre_integrated_vs_extracted_catalog.md) · [LL12 EVT for a new peril](../../learning_logs/12_evt_for_a_new_peril.md).

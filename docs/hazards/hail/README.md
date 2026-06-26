@@ -5,6 +5,12 @@
 deployments differ, and what's reliable vs. not. How hail *damages a specific asset* lives in the per-asset
 pages ([hail × solar](solar.md)).
 
+> **New to hail physics/data?** Start with
+> [`fundamentals_before_m0.md`](fundamentals_before_m0.md): the prerequisite mental model for MESH,
+> hail-day footprints, MRMS-vs-NOAA roles, and areal hit-or-miss coupling.
+> For the source decision itself, read [`source_selection.md`](source_selection.md): why MRMS is the V1
+> spine, why NOAA reports are validation/calibration only, and why MYRORSS is deferred.
+
 > **One-line state:** the hail catalog and frequency are built both ways (a deep per-asset run and a
 > full-CONUS grid). Frequency is trustworthy; **raw radar severity has known outliers that are not yet
 > resolved** — that's the open V1 quality-assessment item.
@@ -49,8 +55,9 @@ Two facts about MESH drive everything downstream:
 This is what makes hail the *hard* hazard, and the reference for the others. Wildfire gets a pre-integrated
 field (FSim) it can largely ingest; hail must be **self-built and anchored** — build frequency + severity
 from raw MESH, then validate against reports and (future) the published hail-climate literature. The
-sourcing reasoning is in [`discussion/conus_grid/hail/`](../../extra/discussion/conus_grid/hail/README.md)
-(`00` research → `01` triage).
+sourcing decision is summarized in [`source_selection.md`](source_selection.md), with deeper research in
+[`discussion/conus_grid/hail/`](../../extra/discussion/conus_grid/hail/README.md) (`00` research → `01`
+triage).
 
 ## 3. How we model it — two deployments of one engine
 
@@ -131,6 +138,7 @@ calibrated product.** (Principle `good_enough_for_v1`, being formalized.)
 ## 7. Go deeper
 
 - **Reasoning:** [`discussion/conus_grid/`](../../extra/discussion/conus_grid/README.md) (+ `hail/`).
+- **Source selection:** [`source_selection.md`](source_selection.md).
 - **Decisions / plan-of-record:** [`plans/hail/`](../../plans/hail/) (deep run) · [`plans/hazard_conus_grid/hail/`](../../plans/hazard_conus_grid/hail/) (grid).
 - **Code:** [`Notebooks/hail/`](../../../Notebooks/hail/README.md) (deep) · [`Notebooks/hazard_conus_grid/hail/`](../../../Notebooks/hazard_conus_grid/hail/README.md) (grid).
 - **Per-asset:** [hail × solar](solar.md).
