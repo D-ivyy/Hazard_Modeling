@@ -254,7 +254,7 @@ pool. Solar, by contrast, built its own catalog at 100 km and was already correc
    **24 → 95 storms** (Cat-3 count 1 → 5), wind **EAL 0.012% → 0.067%**, **PML500 1.43% → 5.70%** of TIV.
 3. **Solar M2/M4 gain an `asset=="solar"` filter** so the wind-farm site can't leak into the solar pipeline
    (verified: solar outputs byte-identical).
-4. **Surge stays at 50 km.** The flood-coastal surge leg keeps its ≤50 km rate ([JD-FL-15](../flood/decisions.md)).
+4. **Surge stays at 50 km.** The flood-coastal surge leg keeps its ≤50 km rate ([JD-FL-21](../flood/decisions.md)).
    The two legs join on `event_family_id` (= RAFT storm_ID); the 50 km surge storms are a strict **subset** of the
    100 km wind storms, so the join is still clean. The flood-coastal × wind **coastal compound restricts its wind
    leg to the 50 km surge event set** (so the surge-driven compound is unchanged — still 24 storms — and the

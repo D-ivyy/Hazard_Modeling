@@ -11,7 +11,7 @@ M3 damage → M4 loss (compound surge×wind). Parent: [`m1_catalog/`](../README.
 [`riverine/`](../riverine/README.md) · [`pluvial/`](../pluvial/README.md). Plan:
 [`m1_catalog.md`](../../../../docs/plans/flood/m1_catalog.md). Notebook: [`01_catalog`](01_catalog.ipynb) (built).
 
-## Method — RAFT screen + HURDAT2 frequency ([JD-FL-15](../../../../docs/plans/flood/decisions.md))
+## Method — RAFT screen + HURDAT2 frequency ([JD-FL-21](../../../../docs/plans/flood/decisions.md))
 - **Event screen:** the **RAFT** synthetic North-Atlantic TC catalog (`RAFT.NA.v20231016.nc`) — each storm passing
   **≤ 50 km at ≥ 64 kt** → a per-storm row (`category`, `event_family_id`).
 - **Frequency `λ`:** **observed-anchored** from **HURDAT2** close-passages within 50 km over the ~173-yr record.
@@ -45,7 +45,7 @@ RAFT catalog + HURDAT2 tracks/landfalls (+ SLOSH MOM, sampled in M2) → `data/f
 ## Decisions & assumptions
 [JD-FL-12](../../../../docs/plans/flood/decisions.md) (compound surge×wind, per-subsystem max on `event_family_id`) ·
 [JD-FL-14](../../../../docs/plans/flood/decisions.md) (SLOSH category spine, source-tagged) ·
-[JD-FL-15](../../../../docs/plans/flood/decisions.md) (RAFT close-passage screen + observed λ) ·
+[JD-FL-21](../../../../docs/plans/flood/decisions.md) (RAFT close-passage screen + observed λ) ·
 [JD-FL-16/17](../../../../docs/plans/flood/decisions.md) (wind leg appended to hurricane; all-three sites) ·
 [JD-FL-19](../../../../docs/plans/flood/decisions.md) (M1 = field/event catalog, M2 = coupling) ·
 [JD-FL-4](../../../../docs/plans/flood/decisions.md) (`event_family_id` hook). Register:

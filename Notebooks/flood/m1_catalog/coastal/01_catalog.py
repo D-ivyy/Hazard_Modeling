@@ -24,7 +24,7 @@
 #
 # **What this notebook does:** builds the asset-independent coastal **event catalog** for **every coastal-exposed
 # site, both assets** in one pass — one M1 per sub-peril, with the asset mattering only at M2 (per JD-FL-19). Each
-# exposed site gets the same RAFT close-passage screen ([JD-FL-15](../../../docs/plans/flood/decisions.md): ≤50 km,
+# exposed site gets the same RAFT close-passage screen ([JD-FL-21](../../../docs/plans/flood/decisions.md): ≤50 km,
 # ≥64 kt) → a per-storm catalog (category, `event_family_id`), and an observed-anchored frequency `λ` from HURDAT2
 # close-passages within 50 km over the record. Coastal sites: solar **Discovery Solar Center** (FL, high-surge proving) + **LA3 West Baton Rouge** (LA, all-three) +
 # **Hayhurst** (structural zero), and wind **Amazon Wind Farm US East** (NC, all-three). The manifest carries a
@@ -40,7 +40,7 @@ ROOT = Path.cwd()
 while ROOT != ROOT.parent and not (ROOT / "AGENTS.md").exists():
     ROOT = ROOT.parent
 FL = ROOT / "data" / "flood"; TC = ROOT / "data" / "hurricane"
-R_SURGE_KM = 50.0; HUR_KT = 64.0      # JD-FL-15
+R_SURGE_KM = 50.0; HUR_KT = 64.0      # JD-FL-21
 
 def _slug(name): return name.lower().replace(" ", "_").replace(".", "").replace("(", "").replace(")", "").replace(",", "")
 
@@ -134,7 +134,7 @@ manifest = {
     "peril": "flood", "sub_peril": "coastal", "layer": "M1",
     "kind": "shared asset-independent storm catalog, ALL coastal sites (Path 2 / JD-FL-19) — SLOSH sampling is each asset's M2",
     "event_model": "event-based (compound-Poisson) — combines with hurricane wind via event_family_id (JD-FL-12)",
-    "decisions": ["JD-FL-14 (SLOSH-only)", "JD-FL-15 (≤50km ≥64kt, observed-anchored λ)", "JD-FL-19 (Path 2)", "JD-FL-17 (unify per all-three site)"],
+    "decisions": ["JD-FL-14 (SLOSH-only)", "JD-FL-21 (≤50km ≥64kt, observed-anchored λ)", "JD-FL-19 (Path 2)", "JD-FL-17 (unify per all-three site)"],
     "slosh_source": "data/flood/raw/slosh/US_SLOSH_MOM_Inundation_v2 (M2 samples it at the asset)",
     "R_surge_km": R_SURGE_KM, "hur_kt": HUR_KT,
     "sites": site_entries,                                   # per-site, both assets (wind M2 reads its slug here)

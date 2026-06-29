@@ -44,7 +44,7 @@ asset** as flood-coastal × wind, so the per-storm wind loss **joins the surge l
 - **Curve Low-confidence** (reused convective_wind turbine curve, greenfield) — the dominant uncertainty; DR caps ~0.65.
 - **λ is the ≤100 km wind-screen rate** ([JD-TC-8](../../../docs/plans/hurricane/decisions.md), unified hurricane M1 — wind
   reaches ~100 km, so it is no longer screened at the 50 km surge radius). The **surge** leg keeps its ≤50 km rate
-  ([JD-FL-15](../../../docs/plans/flood/decisions.md)); the two join on `event_family_id` and the 50 km surge storms
+  ([JD-FL-21](../../../docs/plans/flood/decisions.md)); the two join on `event_family_id` and the 50 km surge storms
   remain a strict subset of these 100 km wind storms, so the compound combine stays consistent.
 - **Wind-only headline is the cell's own number**; the surge × wind **compound** combine is the separate flood-coastal
   × wind M4 step (reads M3's per-storm per-subsystem table, joins on `event_family_id`).

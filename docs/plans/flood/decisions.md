@@ -15,7 +15,7 @@ Running record of the non-obvious design decisions for the flood → solar build
 > genuinely new step), JD-FL-13 (coastal site pair), JD-FL-14 (SLOSH category-based spine + standalone→compound
 > sequencing). Coastal realizes the [JD-FL-1](#jd-fl-1)/[JD-FL-4](#jd-fl-4) deferral hooks; not yet built.
 > **Update (2026-06-20):** M0 coastal built (`01_solar_sites` — Discovery Solar Center FL, the surge high
-> site); the surge **event/frequency definition** for M1 is settled in JD-FL-15.
+> site); the surge **event/frequency definition** for M1 is settled in JD-FL-21.
 > **Update (2026-06-20):** the **compound combine's wind leg** is settled in JD-FL-16 — Discovery appended to the
 > hurricane pipeline (not recomputed in flood, not reusing Everglades).
 > **Update (2026-06-20) — coastal × solar BUILT end-to-end (M0→M4).** Discovery Solar Center FL: surge leg
@@ -39,7 +39,7 @@ Running record of the non-obvious design decisions for the flood → solar build
 **Date:** 2026-06-23 · **Status:** ✅ **executed** (2026-06-23) · Corrects a sampling bug in solar coastal M4; wind-farm was already correct · *basics-spot-on / single-source-of-truth*
 
 **Context.** The solar coastal-compound stream ([JD-FL-12](#jd-fl-12)/[JD-FL-16](#jd-fl-16)) joins flood surge to hurricane
-wind on `event_family_id`, then Monte-Carlos a compound-Poisson loss at the **surge** rate `λ_surge` ([JD-FL-15](#jd-fl-15):
+wind on `event_family_id`, then Monte-Carlos a compound-Poisson loss at the **surge** rate `λ_surge` ([JD-FL-21](#jd-fl-21):
 storms within **50 km**). But the join was **anchored on the hurricane wind product** (`tc_m3_damage.parquet`), which carries
 every storm within **100 km** (the wind radius, [JD-TC-8](../hurricane/decisions.md)) — **280** storms at Discovery, **51** at
 LA3 — with surge left-joined on (depth = 0 for the 163 / 40 storms beyond 50 km). The MC then drew
@@ -338,7 +338,9 @@ example becomes cluttered → split Discovery into a sidecar notebook (the rejec
 
 ---
 
-## JD-FL-15 · Surge event definition — **hurricane center within 50 km (tighter than wind's 100 km); λ observed-anchored; SLOSH-MOM worst-case = the single depth conservatism** (don't stack wide-radius over-counting on worst-case depth)
+## JD-FL-21 · Surge event definition — **hurricane center within 50 km (tighter than wind's 100 km); λ observed-anchored; SLOSH-MOM worst-case = the single depth conservatism** (don't stack wide-radius over-counting on worst-case depth)
+
+> **Note:** renumbered from a duplicate **JD-FL-15** (that number is now held solely by the *pluvial ponding* decision below) to resolve an ID collision. All references updated.
 
 **Date:** 2026-06-20 · **Status:** decided · built in M1 coastal `01_catalog` · the surge analogue of [JD-TC-8](../hurricane/decisions.md) (wind frequency); realizes the [JD-FL-4](#jd-fl-4) `event_family_id` stamp · *basics-spot-on*
 

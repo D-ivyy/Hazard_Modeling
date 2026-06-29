@@ -18,7 +18,7 @@
 # integrates. Headline metric is **% of TIV** + dollars. Site: Amazon Wind US East (NC).
 # **Data source:** the M3 per-storm conditional losses (`data/hurricane/tc_windfarm_m3_damage.parquet`), the shared
 # coastal event rate λ from flood-coastal M1 (`flood_coastal_m1_catalog_manifest.json`, Amazon entry, λ≈0.0116/yr,
-# JD-FL-15), and the M0 TIV record (`flood_wind_m0_sites.json`).
+# JD-FL-21), and the M0 TIV record (`flood_wind_m0_sites.json`).
 # **What this notebook does:** turns M3's per-storm conditional losses into a sampled annual-loss distribution on the
 # shared compound-Poisson Monte-Carlo engine (each year draws `N ~ Poisson(λ)` storms, each storm's loss resampled
 # from the empirical per-storm severity, summed within the year and bounded at 100% TIV) and reads EAL / VaR / PML /
@@ -28,7 +28,7 @@
 #
 # **Reported honestly (the caveats carried in):**
 # - **% of TIV is the headline** ($/MW TIV is an estimate — AFL-W3).
-# - **λ is the SHARED coastal-event rate** (≤50 km close-passage rate from flood-coastal M1, JD-FL-15) — used so the
+# - **λ is the SHARED coastal-event rate** (≤50 km close-passage rate from flood-coastal M1, JD-FL-21) — used so the
 #   wind leg and surge leg sit on the identical event frame (required for the compound join). It is anchored on only
 #   2 observed passages / 173 yr → a wide ±~71% frequency band; a standalone wind screen (≤100 km, JD-TC-8) would admit
 #   more distant-but-windy storms and raise λ.
@@ -61,7 +61,7 @@ print("repo root:", ROOT)
 #
 # - **M3 per-storm conditional losses** (`data/hurricane/tc_windfarm_m3_damage.parquet`) — the severity samples.
 # - **Wind λ** (`data/hurricane/tc_m1_site_summary.parquet`, Amazon row) — the ≤100 km WIND-screen event rate
-#   (unified hurricane M1, JD-TC-8). The surge leg keeps its own ≤50 km rate (JD-FL-15); join on `event_family_id`.
+#   (unified hurricane M1, JD-TC-8). The surge leg keeps its own ≤50 km rate (JD-FL-21); join on `event_family_id`.
 # - **TIV** (`data/flood/flood_wind_m0_sites.json`). **Engine:** shared compound-Poisson MC (event-based, no RP bridge).
 #   **Reproducibility:** metrics + annual vector + EP curve → `data/hurricane/tc_windfarm_m4_*`.
 
