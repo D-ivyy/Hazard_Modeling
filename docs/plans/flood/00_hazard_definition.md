@@ -212,7 +212,8 @@ The asset-geometry difference is **within** the bucket, not across buckets:
 > a TC-driven surge/rain event to its parent storm so **one event is counted once** — not separately in the flood and
 > hurricane pipelines (`[REF]` §7: *"use one surge source across both perils and avoid double-counting"*). This hook is
 > now **realized**: coastal is **built** (compound-Poisson surge×wind per-subsystem on `event_family_id`, JD-FL-12) and
-> **joined to hurricane** on that key rather than built standalone in isolation.
+> **joined to hurricane** on that key rather than built standalone in isolation. The pluvial/rain leg of the
+> same hook is **deferred** ([JD-FL-17](decisions.md)).
 
 ---
 

@@ -458,8 +458,8 @@ with pd.option_context("display.max_colwidth", 78, "display.width", 240):
 # - **Flood maxes, wind adds** — the sub-peril combine (worse-source-wins) is *intentionally* different from wind's
 #   additive combine, because flood sub-perils drown the **same** equipment with the **same** water.
 # - **Coupling is site-conditioned for all sub-perils** — reusing wildfire's M2; the asset difference (areal solar
-#   vs per-node wind) is *within* the bucket. Cross-link via `event_family_id` keeps coastal/pluvial from
-#   double-counting against the hurricane peril (coastal is built this way — JD-FL-12).
+#   vs per-node wind) is *within* the bucket. Cross-link via `event_family_id` keeps coastal from
+#   double-counting against the hurricane peril (coastal is built this way — JD-FL-12; the pluvial cross-link is deferred).
 #
 # **→ M0** ([`m0_input_data/`](../m0_input_data/README.md)): the real evidence already met this definition (FEMA NFHL
 # screen + BLE depth + 3DEP DEM ✅). **→ M1:** riverine = read the BLE RP surface + densify (JD-FL-8); pluvial =
